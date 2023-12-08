@@ -4,8 +4,8 @@
         use Illuminate\Support\Facades\DB;
         $products = DB::table('products')->get(['name']);
     @endphp
-    <div class="card shadow border-0 text-center">
-        <h1 class="card-title">
+    <div class="card shadow border-0">
+        <h1 class="card-title text-center">
             Today saved Orders: {{ $customer->name }}
         </h1>
         <div class="card-body">
@@ -99,7 +99,6 @@
             $('.btn-delete').each(function() {
                 ids.push($(this).val());
             });
-            console.log(ids);
             $.ajax({
                 url: '/order/saved/today/delete',
                 type: 'PUT',
@@ -116,7 +115,6 @@
             })
         })
         $(document).on('click', '.btn-delete', function(e) {
-            console.log(e.target.value, e.target.id);
             $.ajax({
                 url: "/order/delete/" + e.target.id,
                 type: 'POST',

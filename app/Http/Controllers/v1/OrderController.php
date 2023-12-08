@@ -85,7 +85,13 @@ class OrderController extends Controller
     }
     public function update_and_save(Request $request)
     {
-        dd($request);
+        // dd($request);
+        $products = $request->product;
+        $quantity = $request->quantity;
+        for ($i = 0; $i < count($products); $i++) {
+            DB::table('products')->where('name', $products[$i])->increment('quantity', $quantity[$i]);
+        }
+        return redirect()->route('orders')->with('success', '');
     }
 
     public function destroy($id)
@@ -102,19 +108,12 @@ class OrderController extends Controller
     // {
     //     $order_ids = $request->input('order_ids');
     //     $ids = array_map('intval', $order_ids);
-    //     $orders = Orders::whereIn('id', $ids)->get();
-    //     // return response()->json(($orders));
-    //     foreach ($orders as $key => $order) {
-    //         $products = $order->product;
-    //         foreach ($products[$key] as $product) {
-    //             return response()->json($product);
-    //             $product->quantity += $order->quantity;
-    //             $product->save();
+    //     for ($i = 0; $i < count($ids); $i++) {
+    //         $orders = Orders::where('id', $ids[$i])->get();
+    //         for ($i = 0; $i < count($orders); $i++) {
+    //             DB::table('products')->where('name', $orders[$i]->product)->increment('quantity', $orders[$i]->quantity);
     //         }
     //     }
-    //     // dd($product->product, $qty->quantity);
-    //     // Products::whereIn('name', $product)->increment('quantity', $qty);
-    //     // $order = Orders::whereIn('id', $ids)->delete();
     //     return response()->json(["success" => "Order Deleted"]);
     // }
 }
