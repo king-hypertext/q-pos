@@ -20,6 +20,7 @@
                     <h6 class="h4 text-capitalize"> {{ $customer->gender }} </h6>
                     <h6 class="h4 text-capitalize"> {{ $customer->address }} </h6>
                     <h6 class="h4 text-capitalize"> {{ $customer->contact }} </h6>
+                    <a href="{{ route('order.show.update', [$customer->id]) }}" target="_blank" rel="noopener noreferrer" role="link" title="click to edit and update today orders" class="btn btn-success text-lowercase">saved orders</a>
                 </div>
             </div>
         </div>
@@ -28,7 +29,8 @@
                 in the list</div>
         @endif
         @if (count($empty_p) == 0)
-            <div class="alert alert-danger mt-2 text-center">There are no products available, please <a href="{{ route('products') }}" class="btn btn-link text-lowercase">Add Products</a> </div>
+            <div class="alert alert-danger mt-2 text-center">There are no products available, please <a
+                    href="{{ route('products') }}" class="btn btn-link text-lowercase">Add Products</a> </div>
         @endif
         <div class="container mt-2">
             @if ($errors->any())
@@ -115,70 +117,6 @@
                 <button type="submit" class="btn btn-primary text-capitalize" title="add invoice">Save Order</button>
             </div>
         </form>
-        {{-- <div class="table-responsive">
-            <table class="table table-striped" id="customer-stock-table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Product / Item</th>
-                        <th scope="col">Unit Price</th>
-                        <th scope="col">Available Qty</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Date From</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <style>
-                    input[data-input-total],
-                    input[data-input-total] {
-                        width: 70px;
-                        max-width: 100%;
-                    }
-                </style>
-                <tbody>
-                    @foreach ($products as $key => $product)
-                        <tr>
-                            <td scope="row">{{ $key + 1 }}</td>
-                            <td>{{ $product->product_name }}</td>
-                            <td>{{ $product->price }}</td>
-                            <td>{{ $product->quantity }}</td>
-                            <td>
-                                <input data-input-total value="0" onfocus="this.type='number'" type="text"
-                                    name="" id="" />
-                            </td>
-                            <td>
-                                <input readonly value="0" data-input-total type="text" name=""
-                                    id="">
-                            </td>
-                            <td>720</td>
-                            <td>today</td>
-                        </tr>
-                    @endforeach
-                    {{-- <tr>
-                        <td scope="row">1</td>
-                        <td>oil</td>
-                        <td>20</td>
-                        <td>2</td>
-                        <td>40</td>
-                        <td>18</td>
-                        <td>720</td>
-                        <td>today</td>
-                        <td>
-                            <form action='#' method="post">
-                                <a href="#" class="btn btn-primary text-lowercase me-2">View</a>
-                                @csrf
-                                <input type="hidden" name="id" value="" readonly>
-                                <button onclick="confirmDelete(event)" class="btn btn-danger text-lowercase"
-                                    title="delete stock">
-                                    delete
-                                </button>
-                            </form>
-                        </td>
-                    </tr> --} }
-                </tbody>
-            </table>
-        </div> --}}
     </div>
     @if (session('success'))
         <script>
@@ -251,7 +189,7 @@
                                 </button>
                             </td>
                         </tr>`;
-            if (row < 9) {
+            if (row = 1) {
                 $("tbody#td-parent").append(newInvoiceRow);
                 $(function() {
                     $(".select-product").select2({

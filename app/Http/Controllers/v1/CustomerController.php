@@ -16,6 +16,11 @@ class CustomerController extends Controller
     }
     public function create(Request $request)
     {
+        $request->validate([
+            'customer-name' => 'required|string',
+            'contact' => 'required|numeric',
+            'customer-image' => 'required|file|mimes:png,jpg,jpeg,webp',
+        ]);
         $image = '';
         if ($request->hasFile("customer-image")) {
             $request->validate([

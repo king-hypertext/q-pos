@@ -182,6 +182,7 @@
                 scrollY: false,
                 processing: true,
                 serverSide: true,
+                pageLength: 500,
                 ajax: {
                     url: "{{ route('orders') }}",
                     data: function(data) {
@@ -290,6 +291,7 @@
         });
         $(document).ready(function() {
             $(document).on('click', '.btn_return_order', function(e) {
+                $('#return-quantity').attr('autofocus', 'true');
                 $.ajax({
                     url: "/order/show/" + e.target.id,
                     success: function(data) {

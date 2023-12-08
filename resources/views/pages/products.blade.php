@@ -322,6 +322,7 @@
             search: {
                 return: true,
             },
+            pageLength: 200,
             dom: 'Bfrtip',
             buttons: [{
                     extend: 'excel',

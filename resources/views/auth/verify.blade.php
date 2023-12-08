@@ -18,11 +18,14 @@
                             </ul>
                         </div>
                     @endif
+                    <div class="alert alert-secondary">
+                        Hello Admin, please enter your secret code to verify that it's you. 
+                    </div>
                     @if (session('error'))
                         <h6 class="h6 text-danger text-center">{{ session('error') }}</h6>
                     @endif
                     <div class="form-group mb-4">
-                        <label for="user">Enter your your secret code</label>
+                        <label for="user">Enter your secret code</label>
                         <input autofocus type="number" maxlength="6" name="secret-code" id="user" class="form-control" />
                     </div>
                     <div class="form-group">

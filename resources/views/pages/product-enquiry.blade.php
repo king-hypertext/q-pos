@@ -23,6 +23,9 @@
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
+                @php
+                    use Carbon\Carbon;
+                @endphp
                 <tbody>
                     @foreach ($data as $key => $product)
                         <tr>
@@ -35,7 +38,8 @@
                             <td>{{ $product->price }}</td>
                             <td>{{ $product->quantity }}</td>
                             <td>{{ $product->supplier }}</td>
-                            <td>{{ $product->expiry_date }}</td>
+                            <td>{{Carbon::parse( $product->prod_date)->format('Y-M-d') }}</td>
+                            <td>{{Carbon::parse( $product->expiry_date)->format('Y-M-d') }}</td>
                             <td>
                                 <form action='{{ route('product.delete', ["$product->id"]) }}' method="post">
                                     <button type="button" id="{{ $product->id }}"
@@ -92,7 +96,7 @@
                                 </div>
                             </div>
                             <div class="form-outline">
-                                <input required type="text" onfocus="this.type='number'" name="quantity" id="quantity"
+                                <input required type="text" autofocus onfocus="this.type='number'" name="quantity" id="quantity"
                                     class="form-control" />
                                 <label class="form-label" for="quantity">Quantity</label>
                             </div>

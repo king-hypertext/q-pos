@@ -40,9 +40,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('products') }}" title="Products" class="link nav-link">
+                        <a href="{{ route('products') }}" title="Inventories" class="link nav-link">
                             <i class="fas fa-chevron-right"></i>
-                            <span>Products</span>
+                            <span>Inventories</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -90,10 +90,6 @@
                         <li><span class="fw-semibold"> Since: </span> {{ auth()->user()->login }}</li>
                         <li><span class="fw-semibold"> Last Logout: </span> {{ auth()->user()->logout }}</li>
                     </ul>
-                </div>
-                <div class="sticky-bottom text-center mb-3">
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                        data-bs-target="#modal-logout">Logout</button>
                 </div>
             </div>
         </aside>

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\v1;
 
 use App\Models\v1\Orders;
+use App\Models\v1\Customers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\v1\Products;
 
 class OrderController extends Controller
 {
@@ -16,7 +18,7 @@ class OrderController extends Controller
         if ($request->ajax()) {
             $data = Orders::select('*');
             if ($request->filled('from_date') && $request->filled('to_date')) {
-                $data = $data->whereBetween('created_at', [$request->from_date, $request->to_date]);
+                $data = $data->whereBetween('created_at', [$request->from_date, $request->to_date])->orderBy('created_at', 'DESC');
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('Action', function ($row) {
@@ -30,15 +32,10 @@ class OrderController extends Controller
         return view("pages.orders", ["title" => "Orders"]);
     }
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
         $order = Orders::find($id);
         return response()->json($order);
-        // dd(count(Orders::where('order_number', $id)->get()));
-        // $data = Orders::where('order_number', $id)->get();
-        // return count($data) > 0 ? response()->json($data) : response()->json([
-        //     "response" => "invalid order number"
-        // ], 404);
     }
     public function create(Request $request)
     {
@@ -79,9 +76,45 @@ class OrderController extends Controller
         }
         return redirect()->route("orders")->with("success", "Invoice Saved");
     }
+
+    public function show_and_update($customer_id)
+    {
+        $customer = Customers::find($customer_id);
+        $data = Orders::where('customer_id', $customer_id)->where('created_at', Carbon::now()->format('Y-m-d'))->get();
+        return count($data) !== 0 ? view('pages.view-order', ['orders' => $data, 'customer' => $customer, 'title' => 'Saved Orders']) : redirect()->route('customers');
+    }
+    public function update_and_save(Request $request)
+    {
+        dd($request);
+    }
+
     public function destroy($id)
     {
-        Orders::destroy($id);
-        return back()->with("success", "Order Deleted");
+        $order = Orders::find($id);
+        $qty = $order->quantity;
+        $update = Products::where('name', $order->product)->increment('quantity', $qty);
+        if ($update) {
+            Orders::destroy($id);
+            return response()->json(["success" => "Order Deleted"]);
+        }
     }
+    // public function deleteAll(Request $request)
+    // {
+    //     $order_ids = $request->input('order_ids');
+    //     $ids = array_map('intval', $order_ids);
+    //     $orders = Orders::whereIn('id', $ids)->get();
+    //     // return response()->json(($orders));
+    //     foreach ($orders as $key => $order) {
+    //         $products = $order->product;
+    //         foreach ($products[$key] as $product) {
+    //             return response()->json($product);
+    //             $product->quantity += $order->quantity;
+    //             $product->save();
+    //         }
+    //     }
+    //     // dd($product->product, $qty->quantity);
+    //     // Products::whereIn('name', $product)->increment('quantity', $qty);
+    //     // $order = Orders::whereIn('id', $ids)->delete();
+    //     return response()->json(["success" => "Order Deleted"]);
+    // }
 }

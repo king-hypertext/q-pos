@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('supplier');
             $table->string('image')->nullable()->default('');
             $table->date('prod_date')->nullable();
-            $table->date('expiry_date');
+            $table->date('expiry_date')->nullable();
             $table->date('created_at');
             $table->date('updated_at')->nullable();
         });

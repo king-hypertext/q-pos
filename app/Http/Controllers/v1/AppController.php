@@ -73,7 +73,7 @@ class AppController extends Controller
         $products = Products::all()->count("id");
         $low_stock = Products::where('quantity', '<=', '5')->where('quantity', '>', '1')->count('id');
         $out_of_stock = Products::where('quantity', '<=', '0')->count('id');
-        $expired_products = Products::where('expiry_date', '<=', Date('Y-m-d'))->count('id');
+        $expired_products = Products::where('expiry_date', '<=', Carbon::now()->addMonth())->count('id');
         $suppliers = Suppliers::all()->count('id');
         $t_orders = Orders::where('created_at', Date('Y-m-d'))->count('id');
         $orders = Orders::all()->count('id');

@@ -225,6 +225,7 @@
                     }, 0);
                     $(api.column(6).footer()).html(' ' + pageTotal);
                 },
+                pageLength: 200,
                 scrollY: false,
                 processing: true,
                 serverSide: true,

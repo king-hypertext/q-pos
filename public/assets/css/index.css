@@ -146,7 +146,7 @@ li>a.link>i {
     display: flex;
 }
 
-.product-image-table-view{
+.product-image-table-view {
     width: 80px;
     height: 45px;
     place-content: center;
@@ -154,11 +154,14 @@ li>a.link>i {
     background: #fff;
     border: none;
 }
-a>img.img-user, .product-image {
+
+a>img.img-user,
+.product-image {
     border-radius: 50%;
     width: 45px;
     height: 45px;
 }
+
 .product-image {
     border-radius: 50%;
     width: 55px;
@@ -215,9 +218,11 @@ a>.img-user>span {
         visibility: visible;
     }
 }
-.form-outline .form-control{
+
+.form-outline .form-control {
     border: var(--bs-border-width) solid var(--bs-border-color) !important;
 }
+
 .form-control:focus,
 .form-select:focus {
     box-shadow: 0 0 1px #02292d;

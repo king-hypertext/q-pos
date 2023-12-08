@@ -7,7 +7,7 @@
                 <form action="{{ url('/auth/new-password') }}" method="POST">
                     @csrf
                     <div class="text-center">
-                        <img src="assets/images/logo-black.png" alt="logo">
+                        <img src="{{ asset('logo.png') }}" style="height: 80px" alt="logo">
                     </div>
                     <h3 class="h5 text-center text-primary py-2">
                         New Password

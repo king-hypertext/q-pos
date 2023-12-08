@@ -75,7 +75,7 @@
                             </h2>
                         </div>
                         <div class="col-4 text-right">
-                            <a href="#" class="btn btn-outline-light">View</a>
+                            <a href="{{ route('orders') }}" class="btn btn-outline-light">View</a>
                         </div>
                     </div>
                 </div>

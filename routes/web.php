@@ -79,9 +79,12 @@ Route::middleware(["auth", "admin"])->group(function () {
     Route::get("/orders/all", "getOrders")->name("orders.all"); //show all suppliers in a page
     Route::get("/order/edit/{id}", "edit")->name("order.edit"); //form for editing a order
     Route::get("/order/show/{id}", "show")->name("order.show"); // page for a particular order
+    Route::get('/order/saved/today/{id}', 'show_and_update')->name('order.show.update');
+    Route::post('/order/saved/today/{id}', 'update_and_save')->name('order.show.save');
     Route::post("/order/store/{id}", "store")->name("order.store"); //store the changes made to a order
     Route::post("/order/add", "create")->name("order.add"); //create a new order
     Route::put("/order/update", "update")->name("order.update"); //update quantity of a order
+    Route::put('/order/saved/today/delete', 'deleteAll')->name('order.today.delete');
     Route::post("/order/delete/{id}", "destroy")->name('order.delete'); //delete the order
   });
   Route::controller(ReturnController::class)->group(function () {

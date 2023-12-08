@@ -56,7 +56,7 @@
                             </div>
                             <div class="col-6">
                                 <label class="form-label" for="expiryDate">Expiry Date</label>
-                                <input required type="date" min="{{ Date('Y-m-d') }}" value="{{ @old('expiry-date') }}" name="expiry-date" id="expiryDate"
+                                <input type="date" min="{{ Date('Y-m-d') }}" value="{{ @old('expiry-date') }}" name="expiry-date" id="expiryDate"
                                     class="form-control" />
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                         </div>
                         <div class="mb-4">
                             <label for="productImage">Product Image</label>
-                            <input type="file" onchange="previewImage()" name="product-image" id="productImage"
+                            <input required type="file" onchange="previewImage()" name="product-image" id="productImage"
                                 class="form-control" accept="image/*" />
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Save Product</button>

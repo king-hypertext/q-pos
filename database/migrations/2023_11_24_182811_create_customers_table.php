@@ -15,9 +15,9 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('gender');
+            $table->string('gender')->nullable();
             $table->date('date_of_birth')->nullable();
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->string('contact');
             $table->string('image')->nullable()->default('');
             $table->date('created_at');

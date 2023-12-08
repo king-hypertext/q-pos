@@ -13,19 +13,19 @@ class ProductController extends Controller
     public function index()
     {
         $products = Products::all();
-        return view("pages.products", ["products" => $products, "title" => "Products"]);
+        return view("pages.products", ["products" => $products, "title" => "Inventories"]);
     }
     public function view($enquiry)
     {
-        $low_stock = Products::where('quantity', '<', '5')->get();
+        $low_stock = Products::where('quantity', '<=', '5')->get();
         $out_of_stock = Products::where('quantity', '<=', '0')->get();
-        $expired_products = Products::where('expiry_date', '<=', Date('Y-m-d'))->get();
+        $expired_products = Products::where('expiry_date', '<=', Carbon::now()->addMonth())->get();
         if ($enquiry == 'low_stock') {
             return view('pages.product-enquiry', ['title' => 'Products-Low Stock', 'data' => $low_stock]);
         } else if ($enquiry == 'out_of_stock') {
             return view('pages.product-enquiry', ['title' => 'Products-Out of Stock', 'data' => $out_of_stock]);
         } else if ($enquiry == 'expired') {
-            return view('pages.product-enquiry', ['title' => 'Products-Enquiry', 'data' => $expired_products]);
+            return view('pages.product-enquiry', ['title' => 'Expired Products', 'data' => $expired_products]);
         }
     }
     /** insert new data into database */

@@ -56,7 +56,7 @@
                                             title="Edit {{ $customer->name }}">
                                             Edit
                                         </button>
-                                        <a href="{{ route('customer.show', [$customer->id]) }}" class="btn btn-success">
+                                        <a target="_blank" rel="noopener noreferrer" href="{{ route('customer.show', [$customer->id]) }}" class="btn btn-success">
                                             Create Order
                                         </a>
                                         @csrf
@@ -100,17 +100,17 @@
                             <div class="form-outline mb-4">
                                 <input required type="text" name="customer-name" id="customertName"
                                     class="form-control" />
-                                <label class="form-label" for="customertName">Customer Name</label>
+                                <label class="form-label" for="customertName">Worker Name</label>
                             </div>
                             <div class="row mb-4">
                                 <div class="col-6">
                                     <label class="form-label" for="dob">Date of Birth</label>
-                                    <input required type="date" max="{{ Date('Y-m-d') }}" name="dob" id="dob"
+                                    <input type="date" max="{{ Date('Y-m-d') }}" name="dob" id="dob"
                                         class="form-control" />
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label" for="gender">Gender</label>
-                                    <select required name="gender" id="cust-gender" class="form-select">
+                                    <select name="gender" id="cust-gender" class="form-select">
                                         <option disabled>Select Gender</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
@@ -124,8 +124,7 @@
                                 <label class="form-label" for="customerContact">Contact</label>
                             </div>
                             <div class="form-outline mb-4">
-                                <input required type="text" name="address" id="customerAddress"
-                                    class="form-control" />
+                                <input type="text" name="address" id="customerAddress" class="form-control" />
                                 <label class="form-label" for="customerAddress">Address</label>
                             </div>
                             <div class="image-preview-wrapper-s">
@@ -134,7 +133,7 @@
                             </div>
                             <div class="mb-4">
                                 <label for="customerImage">Customer Image</label>
-                                <input type="file" onchange="previewImageFromServer()" name="customer-image"
+                                <input required type="file" onchange="previewImageFromServer()" name="customer-image"
                                     accept="image/*" id="customer_image" class="form-control" />
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Update Customer</button>
@@ -231,6 +230,7 @@
             search: {
                 return: true,
             },
+            pageLength: 200,
             dom: 'Bfrtip',
             buttons: [{
                     extend: 'excel',
