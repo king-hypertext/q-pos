@@ -31,7 +31,25 @@ class OrderController extends Controller
         }
         return view("pages.orders", ["title" => "Orders"]);
     }
+    public function search(Request $request)
+    {
+        $res = Products::select("name")->where("name", "LIKE", "%{$request->term}%")->get();
+        return response()->json($res);
+        // $query = $request->get('term', '');
+        // return response()->json($query);
+        // $products = Products::where('name', 'LIKE', '%' . $query . '%')->get();
 
+        // $data = [];
+
+        // foreach ($products as $product) {
+        //     $data[] = [
+        //         'id' => $product->id,
+        //         'value' => $product->name,
+        //     ];
+        // }
+
+        // return response()->json($data);
+    }
     public function show($id)
     {
         $order = Orders::find($id);

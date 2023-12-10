@@ -76,6 +76,7 @@ Route::middleware(["auth", "admin"])->group(function () {
   // orders routes
   Route::controller(OrderController::class)->group(function () {
     Route::get("/orders", "index")->name("orders"); //show all suppliers in a page
+    Route::get("/product/find", "search");
     Route::get("/orders/all", "getOrders")->name("orders.all"); //show all suppliers in a page
     Route::get("/order/edit/{id}", "edit")->name("order.edit"); //form for editing a order
     Route::get("/order/show/{id}", "show")->name("order.show"); // page for a particular order

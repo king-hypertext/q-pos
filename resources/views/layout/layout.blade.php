@@ -7,18 +7,19 @@
     <link rel="shortcut icon" href="{{ url('logo.png') }}" type="image/x-icon" />
     <link rel="apple-touch-icon" href="{{ url('logo.png') }}" />
     <link rel="stylesheet" href="{{ url('assets/fonts/font-awesome/css/all.min.css') }}" />
-    <link rel="stylesheet" href="{{ url('assets/plugins/Waves/waves.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/plugins/jquery-ui-1.13.2/jquery-ui.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/plugins/jquery-ui-1.13.2/jquery-ui.structure.min.css') }}" />
     <link rel="stylesheet"
         href="{{ asset('assets/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.css') }}">
-    <link rel="stylesheet" href="{{ url('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2-bootstrap-5-theme.css') }}" />
+    <link rel="stylesheet" href="{{ url('assets/plugins/datatables/dataTables.bootstrap5.min.css') }}" />
     <link rel="stylesheet" href="{{ url('assets/plugins/bootstrap-datepicker/css/bootstrap-datetimepicker.css') }}" />
     <link rel="stylesheet" href="{{ url('assets/plugins/bootstrap-daterangepicker/daterangepicker.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/plugins/alert/sweetalert2.css') }}" />
     <link rel="stylesheet" href="{{ url('assets/plugins/mdb/mdb.min.css') }}" />
     <link rel="stylesheet" href="{{ url('assets/css/bootstrap.css') }}" />
-    <link rel="stylesheet" href="{{ url('assets/css/index.css') }}">
+    <link rel="stylesheet" href="{{ url('assets/css/index.css') }}" />
     <script src="{{ asset('assets/plugins/alert/sweetalert2.all.min.js') }}"></script>
     <script src="{{ url('assets/plugins/jquery-ui-1.13.2/external/jquery/jquery.js') }}"></script>
     <title>Q-POS | {{ $title ?? '' }}</title>

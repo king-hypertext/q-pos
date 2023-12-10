@@ -92,28 +92,28 @@
             showConfirmButton: false,
             timerProgressBar: false,
         });
-        var delete_all_btn = $('button#delete_all');
-        console.log(delete_all_btn);
-        $(delete_all_btn).on('click', function() {
-            var ids = [];
-            $('.btn-delete').each(function() {
-                ids.push($(this).val());
-            });
-            $.ajax({
-                url: '/order/saved/today/delete',
-                type: 'PUT',
-                data: {
-                    "order_ids": ids,
-                    "_token": '{{ csrf_token() }}'
-                },
-                success: function(res) {
-                    console.log("success ", res);
-                },
-                error: function(res) {
-                    console.log(res);
-                }
-            })
-        })
+        // var delete_all_btn = $('button#delete_all');
+        // console.log(delete_all_btn);
+        // $(delete_all_btn).on('click', function() {
+        //     var ids = [];
+        //     $('.btn-delete').each(function() {
+        //         ids.push($(this).val());
+        //     });
+        //     $.ajax({
+        //         url: '/order/saved/today/delete',
+        //         type: 'PUT',
+        //         data: {
+        //             "order_ids": ids,
+        //             "_token": '{{ csrf_token() }}'
+        //         },
+        //         success: function(res) {
+        //             console.log("success ", res);
+        //         },
+        //         error: function(res) {
+        //             console.log(res);
+        //         }
+        //     })
+        // })
         $(document).on('click', '.btn-delete', function(e) {
             $.ajax({
                 url: "/order/delete/" + e.target.id,
