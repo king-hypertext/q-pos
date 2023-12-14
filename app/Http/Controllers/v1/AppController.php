@@ -13,7 +13,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Providers\RouteServiceProvider;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Redirect;
+use Nette\Utils\Random;
 
 class AppController extends Controller
 {
@@ -79,6 +82,31 @@ class AppController extends Controller
         $orders = Orders::all()->count('id');
         $customers = Customers::all()->count('id');
         return view("pages.dashboard", ['title' => 'Dashboard', 'suppliers' => $suppliers, 'all_products' => $products, 'low_stock' => $low_stock, 'out_of_stock' => $out_of_stock, 'expired' => $expired_products, 'today_orders' => $t_orders, 'orders' => $orders, 'customers' => $customers]);
+    }
+    public function invoiceOrders()
+    {
+        $data = Orders::orderBy('date', 'DESC');
+        return view('pages.order_invoice', ['title' => 'Invoices-Orders', 'invoices' => $data]);
+    }
+    public function invoiceSuppliers()
+    {
+        $data = Orders::orderBy('date', 'DESC');
+        return view('pages.supplier_invoice', ['title' => 'Invoices-Suppliers', 'invoices' => $data]);
+        $var = [
+            []
+        ];
+        // $pdf = Pdf::loadView('invoice.template')->save(public_path() . "/assets/pdf/invoices/" . "invoice-" . Random::generate(12) . ".pdf")->stream();
+        // return  $pdf->stream();
+    }
+    public function getInvoiceOrders($token)
+    {
+        $data = Orders::orderBy('date', 'DESC');
+        return view('pages.order_invoice', ['title' => 'Invoices-Orders', 'invoices' => $data]);
+    }
+    public function getInvoiceSuppliers($token)
+    {
+        $data = Orders::orderBy('date', 'DESC');
+        return view('pages.supplier_invoice', ['title' => 'Invoices-Suppliers', 'invoices' => $data]);
     }
     public function globalSearch(Request $request)
     {

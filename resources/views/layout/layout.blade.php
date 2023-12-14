@@ -71,6 +71,35 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('invoice.orders') }}" title="Invoices" class="link nav-link">
+                            <i class="fas fa-chevron-right"></i>
+                            <span>Invoices</span>
+                        </a>
+                    </li>
+                    {{-- <li class="nav-item">
+                        <a href="#" title="Invoices"
+                            class="link nav-link drop_down d-flex align-items-center border-0 collapsed" data-bs-toggle="collapse"
+                            aria-expanded="false" data-bs-target="#contents-collapse" aria-controls="contents-collapse">
+                            <i id="dd-icon" class="fas fa-plus"></i>
+                            <span>Invoices</span>
+                        </a>
+                        <ul class="list-unstyled ps-3 collapse rounded mx-2 bg-white"
+                            id="contents-collapse">
+                            <li>
+                                <a class="link nav-link" href="{{ route('invoice.orders') }}">
+                                    <i class="fas fa-chevron-right"></i>
+                                    <span>Order Invoices</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="link nav-link" href="{{ route('invoice.supliers') }}">
+                                    <i class="fas fa-chevron-right"></i>
+                                    <span>Supplier Invoices</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li> --}}
+                    <li class="nav-item">
                         <a href="{{ route('settings') }}" class="link nav-link">
                             <i class="fas fa-chevron-right"></i>
                             <span>Settings</span>
@@ -101,7 +130,8 @@
                 </a>
                 <div class="brand-wrapper">
                     <a href="#" class="navbar-brand">
-                        <img class="" alt="">Q-POS </a>
+                        <img class="" alt="">Q-POS
+                    </a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav ms-2">
@@ -169,7 +199,7 @@
         </div>
     </div>
     <script src="{{ url('assets/plugins/bootstrap/js/bootstrap.bundle.js') }}"></script>
-    <script async src="{{ url('assets/plugins/mdb/js/mdb.min.js') }}"></script>
+    <script src="{{ url('assets/plugins/mdb/js/mdb.min.js') }}"></script>
     <script src="{{ url('assets/plugins/moment/moment.js') }}"></script>
     <script src="{{ url('assets/plugins/select2/js/select2.min.js') }}"></script>
     <script src="{{ url('assets/plugins/jquery-ui-1.13.2/jquery-ui.min.js') }}"></script>
@@ -178,15 +208,15 @@
     <script src="{{ url('assets/plugins/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/dataTables.bootstrap5.min.js') }}"></script>
-    <script src="{{ url('assets/plugins/Waves/waves.min.js') }}"></script>
-    <script src="{{ url('assets/js/main.js') }}"></script>
-    <script src="{{ url('assets/js/menu.js') }}"></script>
+    {{-- <script src="{{ url('assets/plugins/Waves/waves.min.js') }}"></script> --}}
     <script src="{{ url('assets/plugins/datatables/dataTables.buttons.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/jszip.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/pdfmake.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/vfs_fonts.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/buttons.html5.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/buttons.print.min.js') }}"></script>
+    <script src="{{ url('assets/js/main.js') }}"></script>
+    <script src="{{ url('assets/js/menu.js') }}"></script>
     @yield('js')
 </body>
 

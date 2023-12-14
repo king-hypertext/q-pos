@@ -1,0 +1,19 @@
+{
+    "font awesome 6 brands": {
+        "normal": "font_awesome_6_brands_normal_fbdfb215ae1e38099a2b3ffe4b349dfb"
+    },
+    "font awesome 6 free": {
+        "normal": "C:\\xampp\\htdocs\\laravel\\pos\\storage\\fonts\/font_awesome_6_free_normal_8533eef4fe9a2efcdd6c95194424b168",
+        "900": "font_awesome_6_free_900_a9480295f2e20735561c6ba4fde9dbed"
+    },
+    "font awesome 5 brands": {
+        "normal": "font_awesome_5_brands_normal_fbdfb215ae1e38099a2b3ffe4b349dfb"
+    },
+    "font awesome 5 free": {
+        "900": "C:\\xampp\\htdocs\\laravel\\pos\\storage\\fonts\/font_awesome_5_free_900_a9480295f2e20735561c6ba4fde9dbed",
+        "normal": "font_awesome_5_free_normal_8533eef4fe9a2efcdd6c95194424b168"
+    },
+    "fontawesome": {
+        "normal": "fontawesome_normal_b97960f88b0ef35e00daf0114ebf36c8"
+    }
+}

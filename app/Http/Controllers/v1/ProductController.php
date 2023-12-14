@@ -31,6 +31,7 @@ class ProductController extends Controller
     /** insert new data into database */
     public function create(Request $request)
     {
+        dd($request);
         $request->validate([
             "product-name" => "required|string|unique:products,name",
             "unit-price" => "required|numeric",

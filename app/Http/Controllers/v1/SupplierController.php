@@ -32,6 +32,13 @@ class SupplierController extends Controller
         ]);
         return back()->with("success", "Supplier Added");
     }
+    public function createInvoice(Request $request)
+    {
+    }
+    public function showInvoice()
+    {
+        return view('pages.create_supplier_invoice', ['title' => 'Create Suppier Invoice']);
+    }
     public function store(Request $request)
     {
     }

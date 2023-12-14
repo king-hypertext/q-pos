@@ -57,9 +57,22 @@ $(document).ready(function () {
             $("#x-toggle").toggleClass("fa-bars");
             $("#x-toggle").toggleClass("fa-times");
         });
-
+        var droppdown = $(".drop_down");
+        $(droppdown).on("click", function () {
+            $(".link.nav-link > #dd-icon").toggleClass("fa-plus");
+            $(".link.nav-link > #dd-icon").toggleClass("fa-minus");
+        });
+        // if(current)
         var current = location.pathname;
+        // location.ho 
         function addActiveClass(element) {
+            // $(".drop_down").on("mousedown", function () {
+            //     if (element.attr("href", "#").indexOf(current) !== 1) {
+            //         $(document).find(".nav-link").removeClass("active");
+            //         $(document).find(".nav-link.drop_down").addClass("active");
+            //     }
+            // });
+
             if (current === "") {
                 // return null;
                 $("ul>li>a.link.nav-link").first().addClass("active");

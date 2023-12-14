@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_number')->unique();
+            $table->longText('order_token')->unique();
             $table->integer('customer_id');
             $table->string('customer');
             $table->string('product');

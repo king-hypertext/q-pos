@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\v1;
 
+use Nette\Utils\Random;
 use App\Models\v1\Orders;
+use App\Models\v1\Products;
 use App\Models\v1\Customers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\v1\Products;
+use Barryvdh\DomPDF\Facade as PDF;
+// use Barryvdh\DomPDF\PDF;
+
+// use Barryvdh\DomPDF\PDF;
 
 class OrderController extends Controller
 {
@@ -57,42 +62,54 @@ class OrderController extends Controller
     }
     public function create(Request $request)
     {
-        $request->validate([
-            "customer.*" => "required|exists:customers,name",
-            "product.*" => "required|exists:products,name",
-        ]);
-        $product = $request->product;
-        $price = $request->price;
-        $quantity = $request->quantity;
-        $id = $request->id;
-        $days = [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-        ];
-        $week_day = Carbon::now()->dayOfWeek;
-        for ($i = 0; $i < count($product); $i++) {
-            $data = [
-                'order_number' => mt_rand(000011, 990099),
-                'customer_id' => $id,
-                'customer' => $request->customer,
-                'product' => $product[$i],
-                'price' => $price[$i],
-                'quantity' => $quantity[$i],
-                'amount' => ($price[$i] * $quantity[$i]),
-                'day' => $days[$week_day],
-                'created_at' => Carbon::now()->format('Y-m-d')
-            ];
-            Orders::insert($data);
-            DB::table('products')
-                ->where('name', $product[$i])
-                ->decrement('quantity', $quantity[$i]);
-        }
-        return redirect()->route("orders")->with("success", "Invoice Saved");
+        dd($request);
+        // $request->validate([
+        //     "customer.*" => "required|exists:customers,name",
+        //     "product.*" => "required|exists:products,name",
+        // ]);
+        // $product = $request->product;
+        // $price = $request->price;
+        // $quantity = $request->quantity;
+        // $id = $request->id;
+        // $days = [
+        //     "Sunday",
+        //     "Monday",
+        //     "Tuesday",
+        //     "Wednesday",
+        //     "Thursday",
+        //     "Friday",
+        //     "Saturday",
+        // ];
+        // for ($i = 0; $i < count($product); $i++) {
+        //     dd($request);
+        // }
+        // $week_day = Carbon::now()->dayOfWeek;
+        // define('_token', Random::generate(120, '0-9a-z.A-Z'));
+        // for ($i = 0; $i < count($product); $i++) {
+        //     $data = [
+        //         'order_number' => mt_rand(000011, 990099),
+        //         'customer_id' => $id,
+        //         'order_token' => _token,
+        //         'customer' => $request->customer,
+        //         'product' => $product[$i],
+        //         'price' => $price[$i],
+        //         'quantity' => $quantity[$i],
+        //         'amount' => ($price[$i] * $quantity[$i]),
+        //         'day' => $days[$week_day],
+        //         'created_at' => Carbon::now()->format('Y-m-d')
+        //     ];
+        //     Orders::insert($data);
+        //     DB::table('products')
+        //         ->where('name', $product[$i])
+        //         ->decrement('quantity', $quantity[$i]);
+        // }
+
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('invoice.template', ['data', '$data']);
+        return $pdf->setPaper('a4')->stream($request->customer . '-order-' . Date('Y-m-d'), ['Attachment' => false]);
+        // $pdf->setPaper('a4')->stream('filename.pdf', ['Attachment' => false])
+        // return redirect()->route("orders")->with("success", "Invoice Saved");
     }
 
     public function show_and_update($customer_id)

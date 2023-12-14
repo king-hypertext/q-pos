@@ -40,10 +40,18 @@ Route::middleware(["auth", "admin"])->group(function () {
     Route::get("/sales-report", "salesReport")->name("sales.report");
     Route::get("/search", "globalSearch")->name("search");
     Route::post("/auth/logout", "handleLogout")->name("auth.logout");
+    Route::get('/invoices/orders', 'invoiceOrders')->name('invoice.orders');
+    Route::get('/invoices/suppliers', 'invoiceSuppliers')->name('invoice.supliers');
+
+    Route::get('/invoices/orders/{token}', 'getInvoiceOrders')->name('invoice.orders.get');
+    Route::get('/invoices/suppliers/{token}', 'getInvoiceSuppliers')->name('invoice.supliers.get');
   });
   // products routes
   Route::controller(ProductController::class)->group(function () {
     Route::get("/products", "index")->name("products"); //show all products in a page
+    Route::get('/product/add', function () {
+      return view('pages.add_product', ['title' => 'Add Product']);
+    })->name('product.new');
     Route::get("/products/{query}", "view")->name("products.query"); //show all products by query
     Route::get("/product/edit/{id}", "edit")->name("product.edit"); //form for editing a product
     Route::get("/product/show/{id}", "show")->name("product.show"); // page for a particular product
@@ -58,6 +66,8 @@ Route::middleware(["auth", "admin"])->group(function () {
     Route::get("/suppliers", "index")->name("suppliers"); //show all suppliers in a page
     Route::get("/supplier/edit/{id}", "edit")->name("supplier.edit"); //form for editing a supplier
     Route::get("/supplier/show/{id}", "show")->name("supplier.show"); // page for a particular supplier
+    Route::get("/supplier/{supplier}/create-invoice", "showInvoice")->name('supplier.invoice.show');
+    Route::post("/supplier/create-invoice","createInvoice")->name("supplier.invoice.add");
     Route::post("/supplier/store/{id}", "store")->name("supplier.store"); //store the changes made to a supplier
     Route::post("/supplier/add", "create")->name("supplier.add"); //create a new supplier
     Route::put("/supplier/update", "update")->name("supplier.update"); //update quantity of a supplier

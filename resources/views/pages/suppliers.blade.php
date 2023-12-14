@@ -48,9 +48,10 @@
                                 <td>
                                     <form action='{{ route('supplier.delete', ["$supplier->id"]) }}' method="post">
                                         <button type="button" id="{{ $supplier->id }}"
-                                            class="btn btn-success text-uppercase btn_edit"
+                                            class="btn btn-primary text-uppercase btn_edit"
                                             title="Edit supplier {{ $supplier->name }}">Edit</button>
                                         @csrf
+                                        <a href="{{ route('supplier.invoice.show', [$supplier->name]) }}" class="btn btn-success">Create Invoice</a>
                                         <input type="hidden" name="id" value="{{ $supplier->id }}" readonly>
                                         <button onclick="confirmDelete(event)" class="btn btn-danger text-uppercase"
                                             title="delete {{ $supplier->name }}">

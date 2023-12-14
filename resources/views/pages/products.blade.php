@@ -12,12 +12,13 @@
     @endphp
     <div class="container-fluid">
         <div class="d-flex justify-content-end me-1 mb-2">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-addProduct">Add
-                Product</button>
+            <a href="{{ route('product.new') }}" target="_blank" class="btn btn-primary">
+                Add Product
+            </a>
         </div>
         @if ($errors->any())
             <div class="alert alert-danger my-2">
-                <ul class="d-flex justify-content-center">
+                <ul class="list-unstyled d-flex justify-content-center">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -65,7 +66,7 @@
                                             title="Top Up Quantity for {{ $product->name }}">Top Up</button>
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $product->id }}" readonly>
-                                        <button onclick="confirmDelete(event)" class="btn btn-danger text-capitalize my-1"
+                                        <button onclick="confirmDelete(event)" type="button" class="btn btn-danger text-capitalize my-1"
                                             title="delete {{ $product->name }}">
                                             delete
                                         </button>
@@ -162,8 +163,8 @@
                                 <div class="row mb-4">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input required type="number" name="unit-price"
-                                                id="unitPrice" class="form-control" step=".01" />
+                                            <input required type="number" name="unit-price" id="unitPrice"
+                                                class="form-control" step=".01" />
                                             <label class="form-label" for="unitPrice">Unit Price</label>
                                         </div>
                                     </div>
@@ -254,6 +255,7 @@
             filereader.readAsDataURL(file_preview);
         }
         $(document).ready(function() {
+            
             $(document).on('click', 'button.btn_edit', function(e) {
                 $.ajax({
                     url: "/product/edit/" + e.target.id,
@@ -265,7 +267,8 @@
                         $('select#supplier').selected = data.supplier;
                         $('#productionDate').val(data.prod_date).addClass('active');
                         $('#expiryDate').val(data.expiry_date).addClass('active');
-                        $('img#server-preview')[0].src = "/assets/images/products/" + data.image;
+                        $('img#server-preview')[0].src = "/assets/images/products/" + data
+                            .image;
                         $('h5#m-e-title')[0].textContent = `Edit Product ${data.name}`;
                     }
                 });
