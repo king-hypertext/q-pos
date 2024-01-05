@@ -59,7 +59,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('orders') }}" title="Oders" class="link nav-link">
+                        <a href="{{ route('orders.customer') }}" title="Oders" class="link nav-link">
                             <i class="fas fa-chevron-right"></i>
                             <span>Orders</span>
                         </a>
@@ -207,6 +207,7 @@
     <script src="{{ url('assets/plugins/bootstrap-datepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
     <script src="{{ url('assets/plugins/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url('assets/plugins/datatables/dataTables.rowGroup.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables/dataTables.bootstrap5.min.js') }}"></script>
     {{-- <script src="{{ url('assets/plugins/Waves/waves.min.js') }}"></script> --}}
     <script src="{{ url('assets/plugins/datatables/dataTables.buttons.min.js') }}"></script>

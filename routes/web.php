@@ -29,6 +29,7 @@ Route::controller(AppController::class)->group(function () {
   Route::view("/auth/verify-secret-code", "auth.verify", ["title" => "Verify Secret Code"]);
   Route::post("/auth/verify-secret-code", "checkSecretCode");
   Route::post("/auth/login", "handleLogin");
+  Route::get('/test', 'test');
 });
 Route::middleware(["auth", "admin"])->group(function () {
   Route::controller(AppController::class)->group(function () {
@@ -40,11 +41,11 @@ Route::middleware(["auth", "admin"])->group(function () {
     Route::get("/sales-report", "salesReport")->name("sales.report");
     Route::get("/search", "globalSearch")->name("search");
     Route::post("/auth/logout", "handleLogout")->name("auth.logout");
-    Route::get('/invoices/orders', 'invoiceOrders')->name('invoice.orders');
-    Route::get('/invoices/suppliers', 'invoiceSuppliers')->name('invoice.supliers');
+    Route::get('/invoices/order', 'invoiceOrders')->name('invoice.orders');
+    Route::get('/invoices/supplier', 'invoiceSuppliers')->name('invoice.supliers');
 
-    Route::get('/invoices/orders/{token}', 'getInvoiceOrders')->name('invoice.orders.get');
-    Route::get('/invoices/suppliers/{token}', 'getInvoiceSuppliers')->name('invoice.supliers.get');
+    Route::get('/invoices/customer/{token}', 'getInvoiceOrders')->name('invoice.orders.get');
+    Route::get('/invoices/supplier/{token}', 'getInvoiceSuppliers')->name('invoice.supliers.get');
   });
   // products routes
   Route::controller(ProductController::class)->group(function () {
@@ -64,20 +65,26 @@ Route::middleware(["auth", "admin"])->group(function () {
   // suppliers routes
   Route::controller(SupplierController::class)->group(function () {
     Route::get("/suppliers", "index")->name("suppliers"); //show all suppliers in a page
+    Route::get("/supplier/data/{supplier}", "getSupplier")->name("supplier.data");
     Route::get("/supplier/edit/{id}", "edit")->name("supplier.edit"); //form for editing a supplier
     Route::get("/supplier/show/{id}", "show")->name("supplier.show"); // page for a particular supplier
-    Route::get("/supplier/{supplier}/create-invoice", "showInvoice")->name('supplier.invoice.show');
+    Route::post("/supplier/saved/order/filter", "filter_order")->name("supplier.filter.order"); // page for a particular supplier
+    Route::get("/supplier/create-invoice", "showCreateInvoice")->name('supplier.showCreateInvoice');
     Route::post("/supplier/create-invoice","createInvoice")->name("supplier.invoice.add");
     Route::post("/supplier/store/{id}", "store")->name("supplier.store"); //store the changes made to a supplier
     Route::post("/supplier/add", "create")->name("supplier.add"); //create a new supplier
     Route::put("/supplier/update", "update")->name("supplier.update"); //update quantity of a supplier
     Route::post("/supplier/delete/{id}", "destroy")->name("supplier.delete"); //delete the supplier
+    Route::get("/order/supplier/saved/{id}", "show_saved_order")->name("order.supplier.show"); // page for a particular order
+    Route::post("/order/supplier/saved/{id}", "update_order")->name("order.supplier.save"); // page for a particular order
+    Route::post("/order/supplier/saved/delete/{id}", "deleteOrder"); // page for a particular order
   });
   // customers routes
   Route::controller(CustomerController::class)->group(function () {
     Route::get("/customers", "index")->name("customers"); //show all suppliers in a page
     Route::get("/customer/edit/{id}", "edit")->name("customer.edit"); //form for editing a customer
     Route::get("/customer/stock/{id}", "show")->name("customer.show"); // page for a particular customer
+    Route::post("/customer/saved/order/filter", "filter_and_update")->name('order.filter');
     Route::post("/customer/store/{id}", "store")->name("customer.store"); //store the changes made to a customer
     Route::post("/customer/add", "create")->name("customer.add"); //create a new customer
     Route::put("/customer/update", "update")->name("customer.update"); //update quantity of a customer
@@ -85,13 +92,14 @@ Route::middleware(["auth", "admin"])->group(function () {
   });
   // orders routes
   Route::controller(OrderController::class)->group(function () {
-    Route::get("/orders", "index")->name("orders"); //show all suppliers in a page
+    Route::get("/customer/orders", "index")->name("orders.customer"); //show all suppliers in a page
+    Route::get("/supplier/orders", "supplierOrders")->name("orders.supplier");
     Route::get("/product/find", "search");
     Route::get("/orders/all", "getOrders")->name("orders.all"); //show all suppliers in a page
     Route::get("/order/edit/{id}", "edit")->name("order.edit"); //form for editing a order
     Route::get("/order/show/{id}", "show")->name("order.show"); // page for a particular order
-    Route::get('/order/saved/today/{id}', 'show_and_update')->name('order.show.update');
-    Route::post('/order/saved/today/{id}', 'update_and_save')->name('order.show.save');
+    Route::get('/order/saved/{id}', 'show_and_update')->name('order.show.update');
+    Route::post('/order/saved/{id}', 'update_and_save')->name('order.show.save');
     Route::post("/order/store/{id}", "store")->name("order.store"); //store the changes made to a order
     Route::post("/order/add", "create")->name("order.add"); //create a new order
     Route::put("/order/update", "update")->name("order.update"); //update quantity of a order

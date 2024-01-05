@@ -15,20 +15,25 @@
                     <form class="px-5 py-2" action="{{ route('supplier.add') }}" method="POST">
                         @csrf
                         <div class="form-outline mb-3">
-                            <input required type="text" value="{{ @old('supplier-name') }}" name="supplier-name" id="supplierName"
-                                class="form-control" />
+                            <input required type="text" value="{{ @old('supplier-name') }}" name="supplier-name"
+                                id="supplierName" class="form-control" />
                             <label class="form-label" for="supplierName">Supplier Name</label>
                         </div>
-                        {{-- <div class="form-outline mb-4">
-                            <input required type="text" value="{{ @old('product-name') }}" name="product-name" id="productName" class="form-control" />
-                            <label class="form-label" for="productName">Product Name</label>
-                        </div> --}}
+                        <div class="form-outline mb-3">
+                            <select name="category" id="category" class="form-select">
+                                <option value="" selected>Select Category</option>
+                                <option value="allied">ALLIED</option>
+                                <option value="shell">SHELL</option>
+                            </select>
+                        </div>
                         <div class="form-outline mb-4">
-                            <input required type="text" value="{{ @old('contact') }}" name="contact" id="contact" class="form-control" />
+                            <input required type="text" value="{{ @old('contact') }}" name="contact" id="contact"
+                                class="form-control" />
                             <label class="form-label" for="contact">Supplier's Contact</label>
                         </div>
                         <div class="form-outline mb-4">
-                            <input required type="text" value="{{ @old('address') }}" name="address" id="supplierAddress" class="form-control" />
+                            <input required type="text" value="{{ @old('address') }}" name="address"
+                                id="supplierAddress" class="form-control" />
                             <label class="form-label" for="supplierAddress">Supplier's Address</label>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Add Supplier</button>

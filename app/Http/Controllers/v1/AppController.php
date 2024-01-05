@@ -4,22 +4,25 @@ namespace App\Http\Controllers\v1;
 
 use Carbon\Carbon;
 use App\Models\v1\Orders;
+use App\Models\v1\Invoice;
 use App\Models\v1\Products;
 use App\Models\v1\Customers;
 use App\Models\v1\Suppliers;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Providers\RouteServiceProvider;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Dompdf\Dompdf;
-use Illuminate\Support\Facades\Redirect;
-use Nette\Utils\Random;
+use Illuminate\Support\Facades\Response;
 
 class AppController extends Controller
 {
+    public function test()
+    {
+        return view('pages.test');
+    }
     public function login()
     {
         return view("auth.login", ['title' => 'Login']);
@@ -83,30 +86,59 @@ class AppController extends Controller
         $customers = Customers::all()->count('id');
         return view("pages.dashboard", ['title' => 'Dashboard', 'suppliers' => $suppliers, 'all_products' => $products, 'low_stock' => $low_stock, 'out_of_stock' => $out_of_stock, 'expired' => $expired_products, 'today_orders' => $t_orders, 'orders' => $orders, 'customers' => $customers]);
     }
+
     public function invoiceOrders()
     {
-        $data = Orders::orderBy('date', 'DESC');
-        return view('pages.order_invoice', ['title' => 'Invoices-Orders', 'invoices' => $data]);
+        $invoices = Invoice::where('for', 'customer')->where('type', 'order')->orderBy('created_at', 'DESC')->get();
+        return view('pages.order_invoice', ['title' => 'Invoices-Orders', 'invoices' => $invoices]);
     }
     public function invoiceSuppliers()
     {
-        $data = Orders::orderBy('date', 'DESC');
-        return view('pages.supplier_invoice', ['title' => 'Invoices-Suppliers', 'invoices' => $data]);
-        $var = [
-            []
-        ];
-        // $pdf = Pdf::loadView('invoice.template')->save(public_path() . "/assets/pdf/invoices/" . "invoice-" . Random::generate(12) . ".pdf")->stream();
-        // return  $pdf->stream();
+        $data = Invoice::where('for', 'supplier')->latest()->get();
+        return view('pages.supplier_invoice', ['title' => 'Invoices-Suppliers', 'invoices' => $data, 'supplier' => $data]);
     }
     public function getInvoiceOrders($token)
     {
-        $data = Orders::orderBy('date', 'DESC');
-        return view('pages.order_invoice', ['title' => 'Invoices-Orders', 'invoices' => $data]);
+        $customer =  DB::table('customer_stock')->select('customer')->where('order_token', $token)->value('supplier');
+        $date =  DB::table('customer_stock')->select('invoice_time')->where('order_token', $token)->value('invoice_date');
+        $id = Orders::where('order_token', $token)->value('customer_id');
+
+        $customer_data = Customers::find($id);
+        $customer_data->fresh();
+        Pdf::loadView(
+            'pages.invoices',
+            [
+                'invoices' => DB::table('customer_stock')->where('order_token', $token)->get(),
+                'supplier' => $customer_data,
+                'total' => DB::table('customer_stock')->where('order_token', $token)->sum('amount')
+            ]
+        )->save(public_path("/assets/pdf/invoices/" . $customer . "-" . $date . ".pdf"));
+
+        $file = public_path("/assets/pdf/invoices/$customer-$date.pdf");
+        return Response::make(file_get_contents($file, true), 200, ['content-type' => 'application/pdf']);
     }
     public function getInvoiceSuppliers($token)
     {
-        $data = Orders::orderBy('date', 'DESC');
-        return view('pages.supplier_invoice', ['title' => 'Invoices-Suppliers', 'invoices' => $data]);
+        $id = DB::table('supplier_stock')->where('order_token', $token)->value('supplier_id');
+
+        $supplier =  DB::table('supplier_stock')->select('supplier')->where('order_token', $token)->value('supplier');
+        $date =  DB::table('supplier_stock')->select('invoice_time')->where('order_token', $token)->value('invoice_date');
+        $supplier_data = Suppliers::find($id);
+        $supplier_data->fresh();
+        Pdf::loadView(
+            'invoice.template',
+            [
+                'invoices' => DB::table('supplier_stock')->where('order_token', $token)->get(),
+                'supplier' => $supplier_data,
+                'total' => DB::table('supplier_stock')->where('order_token', $token)->sum('amount'),
+                'invoice_number' => DB::table('supplier_stock')->where('order_token', $token)->first('invoice_number'),
+                'order_number' => DB::table('supplier_stock')->where('order_token', $token)->first('order_number'),
+                'date' => DB::table('supplier_stock')->where('order_token', $token)->first('created_at')
+            ]
+        )->save(public_path("/assets/pdf/invoices/" . $supplier . "-" . $date . ".pdf"));
+
+        $file = public_path("/assets/pdf/invoices/$supplier-$date.pdf");
+        return Response::make(file_get_contents($file, true), 200, ['content-type' => 'application/pdf']);
     }
     public function globalSearch(Request $request)
     {

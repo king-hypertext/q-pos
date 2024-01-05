@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('quantity_note')->nullable()->default('');
             $table->string('batch_number')->nullable()->default('null');
             $table->string('supplier');
+            $table->string('category');
             $table->string('image')->nullable()->default('');
             $table->date('prod_date')->nullable();
             $table->date('expiry_date')->nullable();

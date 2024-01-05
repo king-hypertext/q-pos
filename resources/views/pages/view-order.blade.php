@@ -2,20 +2,23 @@
 @section('content')
     @php
         use Illuminate\Support\Facades\DB;
+        use Carbon\Carbon;
         $products = DB::table('products')->get(['name']);
     @endphp
     <div class="card shadow border-0">
         <h1 class="card-title text-center">
-            Today saved Orders: {{ $customer->name }}
+            {{ $customer->name }} - Order date:
+            @php
+                echo Carbon::parse($date)->format('Y-M-d');
+            @endphp
         </h1>
         <div class="card-body">
-            <button id="delete_all" type="button" class="btn btn-warning text-capitalize d-none">delete all</button>
-
             <form id="form-invoice" action="{{ route('order.show.save', [$customer->id]) }}" method="post">
                 @csrf
-                <input type="hidden" name="id" value="{{ $customer->id }}">
+                <input type="hidden" name="customer_id" value="{{ $customer->id }}">
                 <input type="hidden" name="customer" value="{{ $customer->name }}">
                 <input type="hidden" name="date" value="{{ Date('Y-m-d') }}">
+                <input type="hidden" name="order_date" value="{{ $date }}">
                 <hr class="hr text-dark" />
                 <div class="table-responsive text-nowrap">
                     <table class="table table-borderless mb-0">
@@ -49,20 +52,20 @@
                                         <div class="form-group">
                                             <input readonly type="number" name="price[]" type="text"
                                                 value="{{ $order->price }}" id="price_{{ $index + 1 }}"
-                                                class="form-control" value="0" />
+                                                class="form-control u-price" value="0" />
                                         </div>
                                     </td>
                                     <td class="col-md-2">
                                         <div class="form-group">
                                             <input required type="number" name="quantity[]"
-                                                id="quantity_{{ $index + 1 }}" class="form-control qty"
+                                                id="quantity_{{ $index + 1 }}" class="form-control u-quantity"
                                                 value="{{ $order->quantity }}" />
                                         </div>
                                     </td>
                                     <td class="col-md-3">
                                         <div class="form-group">
                                             <input readonly type="text" value="{{ $order->amount }}" name="total[]"
-                                                id="total_{{ $index + 1 }}" class="form-control" />
+                                                id="total_{{ $index + 1 }}" class="form-control u-total" />
                                         </div>
                                     </td>
                                     <td>
@@ -92,29 +95,8 @@
             showConfirmButton: false,
             timerProgressBar: false,
         });
-        // var delete_all_btn = $('button#delete_all');
-        // console.log(delete_all_btn);
-        // $(delete_all_btn).on('click', function() {
-        //     var ids = [];
-        //     $('.btn-delete').each(function() {
-        //         ids.push($(this).val());
-        //     });
-        //     $.ajax({
-        //         url: '/order/saved/today/delete',
-        //         type: 'PUT',
-        //         data: {
-        //             "order_ids": ids,
-        //             "_token": '{{ csrf_token() }}'
-        //         },
-        //         success: function(res) {
-        //             console.log("success ", res);
-        //         },
-        //         error: function(res) {
-        //             console.log(res);
-        //         }
-        //     })
-        // })
         $(document).on('click', '.btn-delete', function(e) {
+            console.log(e);
             $.ajax({
                 url: "/order/delete/" + e.target.id,
                 type: 'POST',
@@ -137,6 +119,25 @@
                     console.log("error ", res);
                 }
             })
+        });
+        $(document).ready(function() {
+            $(document).on('keyup', '.u-quantity', function(elem) {
+                var name = total = elem.target.parentElement.parentElement.parentElement.children[0]
+                    .children[0].children[0].children[0].children[0].value;
+                var price = elem.target.parentElement.parentElement.parentElement.children[1].children[0]
+                    .children[0].value,
+                    total = elem.target.parentElement.parentElement.parentElement.children[3].children[0]
+                    .children[0];
+                quantity = elem.target.value;
+                $.ajax({
+                    method: "GET",
+                    url: "/product/price?q=" + name,
+                    success: function(res) {
+                        elem.target.max = res.data[0].quantity;
+                    },
+                });
+                total.value = price * quantity;
+            });
         })
     </script>
 @endsection

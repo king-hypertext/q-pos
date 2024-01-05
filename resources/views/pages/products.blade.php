@@ -12,7 +12,7 @@
     @endphp
     <div class="container-fluid">
         <div class="d-flex justify-content-end me-1 mb-2">
-            <a href="{{ route('product.new') }}" target="_blank" class="btn btn-primary">
+            <a href="{{ route('product.new') }}" class="btn btn-primary">
                 Add Product
             </a>
         </div>
@@ -35,6 +35,7 @@
                         <th scope="col">PRICE(GHS)</th>
                         <th scope="col">AVAILABLE QTY</th>
                         <th scope="col">SUPPLIED BY</th>
+                        <th scope="col">CATEGORY</th>
                         <th scope="col">PROD. DATE</th>
                         <th scope="col">EXPIRY DATE</th>
                         <th scope="col">Actions</th>
@@ -52,6 +53,7 @@
                                 <td>{{ $product->price }}</td>
                                 <td>{{ $product->quantity }}</td>
                                 <td>{{ $product->supplier }}</td>
+                                <td>{{ $product->category }}</td>
                                 <td>{{ Carbon::parse($product->prod_date)->format('Y-M-d') }}</td>
                                 <td>{{ Carbon::parse($product->expiry_date)->format('Y-M-d') }}</td>
                                 <td>
@@ -61,12 +63,10 @@
                                             title="Edit {{ $product->name }}">
                                             Edit
                                         </button>
-                                        <button type="button" id="{{ $product->id }}"
-                                            class="btn btn-success text-capitalize btn_top_up my-1"
-                                            title="Top Up Quantity for {{ $product->name }}">Top Up</button>
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $product->id }}" readonly>
-                                        <button onclick="confirmDelete(event)" type="button" class="btn btn-danger text-capitalize my-1"
+                                        <button onclick="confirmDelete(event)" type="button"
+                                            class="btn btn-danger text-capitalize my-1"
                                             title="delete {{ $product->name }}">
                                             delete
                                         </button>
@@ -79,7 +79,7 @@
             </table>
         </div>
         {{-- modal top up --}}
-        <div class="modal fade" id="modal-top-up" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+        {{-- <div class="modal fade" id="modal-top-up" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
             aria-labelledby="modal-addCustomer" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="dialog">
                 <div class="modal-content rounded-3 shadow">
@@ -133,7 +133,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         {{-- modal edit --}}
         <div class="modal fade" id="modal-edit" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
             aria-labelledby="modal-addProduct" aria-hidden="true">
@@ -146,31 +146,27 @@
                                     <h5 class="h3 text-capitalize" id="m-e-title"></h5>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-center">
-                                <img id="product-image" src="" alt="Product Image"
-                                    class="rounded-circle product-image bg-light d-none" />
-                            </div>
                             <form class="px-5 py-2" action="{{ route('product.update') }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="id" id="product-id">
                                 <div class="form-outline mb-4">
-                                    <input required type="text" name="product-name" id="productName"
+                                    <input required type="text" name="edit-product-name" id="productName"
                                         class="form-control" />
                                     <label class="form-label" for="productName">Product Name</label>
                                 </div>
                                 <div class="row mb-4">
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input required type="number" name="unit-price" id="unitPrice"
+                                            <input required type="number" name="edit-unit-price" id="unitPrice"
                                                 class="form-control" step=".01" />
                                             <label class="form-label" for="unitPrice">Unit Price</label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-outline">
-                                            <input type="text" name="batch-number" id="batchNumber"
+                                            <input type="text" name="edit-batch-number" id="batchNumber"
                                                 class="form-control" />
                                             <label class="form-label" for="batchNumber">Batch Number</label>
                                         </div>
@@ -178,7 +174,7 @@
                                 </div>
                                 <div class="form-outline mb-4">
                                     <label for="supplier" class="form-label">Supplier</label>
-                                    <select required name="supplier" id="supplier" class="form-select">
+                                    <select required name="edit-supplier" id="supplier" class="form-select">
                                         @php
                                             use App\Models\Suppliers;
                                             $suppliers = Suppliers::select('name')->get();
@@ -191,12 +187,12 @@
                                 <div class="row mb-4">
                                     <div class="col-6">
                                         <label class="form-label" for="productionDate">Manufacturing Date</label>
-                                        <input type="date" max="{{ Date('Y-m-d') }}" name="prod-date"
+                                        <input type="date" max="{{ Date('Y-m-d') }}" name="edit-prod-date"
                                             id="productionDate" class="form-control" />
                                     </div>
                                     <div class="col-6">
                                         <label class="form-label" for="expiryDate">Expiry Date</label>
-                                        <input required type="date" min="{{ Date('Y-m-d') }}" name="expiry-date"
+                                        <input required type="date" min="{{ Date('Y-m-d') }}" name="edit-expiry-date"
                                             id="expiryDate" class="form-control" />
                                     </div>
                                 </div>
@@ -206,7 +202,7 @@
                                 </div>
                                 <div class="mb-4">
                                     <label for="product_image">Product Image</label>
-                                    <input type="file" onchange="previewImageFromServer()" name="product-image"
+                                    <input type="file" onchange="previewImageFromServer()" name="edit-product-image"
                                         id="product_image" class="form-control" accept="image/*" />
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-block">Update Product</button>
@@ -255,20 +251,20 @@
             filereader.readAsDataURL(file_preview);
         }
         $(document).ready(function() {
-            
+
             $(document).on('click', 'button.btn_edit', function(e) {
                 $.ajax({
                     url: "/product/edit/" + e.target.id,
                     success: function(data) {
+                        console.log(data);
                         $('input#product-id').val(data.id).addClass('active');
                         $('#productName').val(data.name).addClass('active');
                         $('#unitPrice').val(data.price).addClass('active');
                         $('#batchNumber').val(data.batch_number).addClass('active');
-                        $('select#supplier').selected = data.supplier;
+                        $('select[name="edit-supplier"]').val(data.supplier);
                         $('#productionDate').val(data.prod_date).addClass('active');
                         $('#expiryDate').val(data.expiry_date).addClass('active');
-                        $('img#server-preview')[0].src = "/assets/images/products/" + data
-                            .image;
+                        $('img#server-preview')[0].src = "/assets/images/products/" + data.image;
                         $('h5#m-e-title')[0].textContent = `Edit Product ${data.name}`;
                     }
                 });
@@ -277,31 +273,31 @@
                     $('#modal-edit').modal('hide');
                 });
             });
-            $(document).on('click', 'button.btn_top_up', function(e) {
-                $('textarea[name="update_info"]').val(
-                    "If quantity is been top up, write some description about the top up\neg. increase in quantity by 10"
-                );
-                var product_id = e.target.id;
-                var quantity = $('input#aval-quantity'),
-                    name = $('input#product-name'),
-                    supplier = $('input#supplier');
-                modal_title = $('#modal-title')[0];
-                $.ajax({
-                    url: "/product/edit/" + product_id,
-                    success: function(res) {
-                        console.log(res);
-                        $('#product-id').val(res.id);
-                        name.val(res.name);
-                        quantity.val(res.quantity);
-                        supplier.val(res.supplier)
-                        modal_title.textContent = `Top Up ${res.name}`;
-                    }
-                });
-                $('#modal-top-up').modal('show');
-                $('button#modal-top-up-close').on('click', function() {
-                    $('#modal-top-up').modal('hide');
-                });
-            })
+            // $(document).on('click', 'button.btn_top_up', function(e) {
+            //     $('textarea[name="update_info"]').val(
+            //         "If quantity is been top up, write some description about the top up\neg. increase in quantity by 10"
+            //     );
+            //     var product_id = e.target.id;
+            //     var quantity = $('input#aval-quantity'),
+            //         name = $('input#product-name'),
+            //         supplier = $('input#supplier');
+            //     modal_title = $('#modal-title')[0];
+            //     $.ajax({
+            //         url: "/product/edit/" + product_id,
+            //         success: function(res) {
+            //             console.log(res);
+            //             $('#product-id').val(res.id);
+            //             name.val(res.name);
+            //             quantity.val(res.quantity);
+            //             supplier.val(res.supplier)
+            //             modal_title.textContent = `Top Up ${res.name}`;
+            //         }
+            //     });
+            //     $('#modal-top-up').modal('show');
+            //     $('button#modal-top-up-close').on('click', function() {
+            //         $('#modal-top-up').modal('hide');
+            //     });
+            // })
         });
         window.confirmDelete = function(e) {
             e.preventDefault();

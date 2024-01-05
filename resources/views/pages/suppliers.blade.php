@@ -12,8 +12,12 @@
     </nav>
     <div class="container-fluid">
         <div class="d-flex justify-content-end me-1 mb-2">
+            <a href="{{ route('supplier.showCreateInvoice') }}" role="button" class="btn btn-success me-2">
+                create invoice
+            </a>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-addSupplier">Add
-                Supplier</button>
+                Supplier
+            </button>
         </div>
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -30,6 +34,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">SUPPLIER</th>
+                        <th scope="col">CATEGORY</th>
                         <th scope="col">CONTACT</th>
                         <th scope="col">ADDRESS</th>
                         <th>Date</th>
@@ -42,6 +47,7 @@
                             <tr>
                                 <td scope="row">{{ $index + 1 }}</td>
                                 <td>{{ $supplier->name }}</td>
+                                <td class="text-uppercase">{{ $supplier->category }}</td>  
                                 <td>{{ $supplier->contact }}</td>
                                 <td>{{ $supplier->address }}</td>
                                 <td>{{ Carbon::parse($supplier->created_at)->format('Y-M-d') }}</td>
@@ -51,7 +57,6 @@
                                             class="btn btn-primary text-uppercase btn_edit"
                                             title="Edit supplier {{ $supplier->name }}">Edit</button>
                                         @csrf
-                                        <a href="{{ route('supplier.invoice.show', [$supplier->name]) }}" class="btn btn-success">Create Invoice</a>
                                         <input type="hidden" name="id" value="{{ $supplier->id }}" readonly>
                                         <button onclick="confirmDelete(event)" class="btn btn-danger text-uppercase"
                                             title="delete {{ $supplier->name }}">
@@ -77,23 +82,27 @@
                                 <h5 class="h3 text-capitalize" id="modal-title"></h5>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center">
-                            <img src="" alt="Product Image" class="d-none rounded-circle product-image bg-light" />
-                        </div>
                         <form class="px-5 py-2" action="{{ route('supplier.update') }}" method="POST">
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="id" id="supplier-id">
                             <div class="form-outline mb-3">
-                                <input type="text" name="supplier-name" id="supplierName" class="form-control" />
+                                <input type="text" name="edit-supplier" id="supplierName" class="form-control" />
                                 <label class="form-label" for="supplierName">Supplier Name</label>
                             </div>
+                            <div class="form-outline mb-3">
+                                <select name="edit-category" id="category" class="form-select">
+                                    <option value="allied">ALLIED</option>
+                                    <option value="shell">SHELL</option>
+                                </select>
+                            </div>
                             <div class="form-outline mb-4">
-                                <input required type="text" name="contact" id="contact" class="form-control" />
+                                <input required type="text" name="edit-contact" id="contact" class="form-control" />
                                 <label class="form-label" for="contact">Supplier's Contact</label>
                             </div>
                             <div class="form-outline mb-4">
-                                <input required type="text" name="address" id="supplierAddress" class="form-control" />
+                                <input required type="text" name="edit-address" id="supplierAddress"
+                                    class="form-control" />
                                 <label class="form-label" for="supplierAddress">Supplier's Address</label>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Update Supplier</button>
@@ -123,6 +132,7 @@
     @endif
 @endsection
 @section('js')
+<script src="{{ asset('assets/plugins/mdb/js/mdb.min.js') }}"></script>
     <script>
         window.confirmDelete = function(e) {
             e.preventDefault();
@@ -144,9 +154,10 @@
         $(document).ready(function() {
             $(document).on('click', 'button.btn_edit', function(e) {
                 var supplier_id = e.target.id;
-                var contact = $('input#contact'),
-                    name = $('input#supplierName'),
-                    address = $('input#supplierAddress');
+                var contact = $('input[name="edit-contact"]'),
+                    name = $('input[name="edit-supplier"]'),
+                    category = $('select[name="edit-category"]')
+                    address = $('input[name="edit-address"]');
                 modal_title = $('#modal-title')[0];
                 $.ajax({
                     url: "/supplier/edit/" + supplier_id,
@@ -154,9 +165,10 @@
                         console.log(res);
                         $('#modal-edit-supplier').modal('show');
                         $('#supplier-id').val(res.id);
-                        name.val(res.name);
-                        contact.val(res.contact);
-                        address.val(res.address)
+                        name.val(res.name).addClass('active');
+                        contact.val(res.contact).addClass('active');
+                        address.val(res.address).addClass('active');
+                        category.selected = res.category;
                         modal_title.textContent = `Edit Supplier ${res.name}`;
                     }
                 })

@@ -8,12 +8,12 @@
         </ol>
     </nav>
     <div class="container-fluid">
-        <div class="d-flex justify-content-end me-1 mb-2">
+       {{--  <div class="d-flex justify-content-end me-1 mb-2">
             <div class="mx-2">
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modal-return"
                     class="btn btn-outline-secondary text-capitalize">Return product</button>
             </div>
-        </div>
+        </div> --}}
         @if ($errors->any())
             <div class="alert alert-danger my-2">
                 <ul class="d-flex justify-content-center">
@@ -204,7 +204,67 @@
                 startDate: moment().subtract(1, 'M'),
                 endDate: moment()
             });
+
+            function addCell(tr, content, colSpan = 1) {
+                let td = document.createElement('th');
+                td.colSpan = colSpan;
+                td.textContent = content;
+                tr.appendChild(td);
+            }
             var table = new DataTable('#return-table', {
+                order: [
+                    [3, 'asc']
+                ],
+                rowGroup: {
+                    startRender: null,
+                    endRender: function(rows, group) {
+                        let totalAmount =
+                            rows
+                            .data()
+                            .pluck('amount').map((str) => parseInt(str)).reduce((a, b) => a + b, 0);
+
+                        totalAmount = $.fn.dataTable.render
+                            .number(',', '.', 2, 'GHS')
+                            .display(totalAmount);
+
+                        let totalQuantity =
+                            rows
+                            .data()
+                            .pluck('quantity')
+                            .reduce(function(a, b) {
+                                return a + b
+                            }, 0);
+
+                        let tr = document.createElement('tr');
+
+                        addCell(tr, 'Sum for ' + group, 5);
+                        addCell(tr, totalQuantity.toFixed(0));
+                        addCell(tr, totalAmount);
+                        /* addCell(tr, rows.data().pluck('quantity').reduce(function(a, b) {
+                            return a + b
+                        }, 0)); */
+
+                        return tr;
+                    },
+                    dataSrc: 'product'
+                },
+                drawCallback: function() {
+                    var api = this.api(),
+                        last = null;
+                    var rows = api.rows({
+                        page: 'current'
+                    }).nodes();
+                    api.column(3, {
+                        page: 'current'
+                    }).data().each(function(group, i) {
+                        if (last !== group) {
+                            $(rows).eq(i).before(
+                                '<tr><th style="background-color: #d1d1d1;" colspan="11">' +
+                                group + '</th></tr>');
+                            last = group;
+                        }
+                    })
+                },
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api(),
                         data;
@@ -223,7 +283,7 @@
                     }).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                    $(api.column(6).footer()).html(' ' + pageTotal);
+                    $(api.column(6).footer()).html('GHS ' + pageTotal);
                 },
                 pageLength: 200,
                 scrollY: false,

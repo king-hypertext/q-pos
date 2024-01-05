@@ -42,9 +42,6 @@
                             <td>{{Carbon::parse( $product->expiry_date)->format('Y-M-d') }}</td>
                             <td>
                                 <form action='{{ route('product.delete', ["$product->id"]) }}' method="post">
-                                    <button type="button" id="{{ $product->id }}"
-                                        class="btn btn-success text-uppercase btn_top_up my-1"
-                                        title="Top Up Quantity for {{ $product->name }}">Top Up</button>
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $product->id }}" readonly>
                                     <button onclick="confirmDelete(event)" class="btn btn-danger text-uppercase my-1"
@@ -135,7 +132,7 @@
             })
         }
         $(document).ready(function() {
-            $(document).on('click', 'button.btn_top_up', function(e) {
+            /* $(document).on('click', 'button.btn_top_up', function(e) {
                 $('textarea[name="update_info"]').val(
                     "If quantity is been top up, write some description about the top up\neg. increase in quantity by 10"
                 );
@@ -159,7 +156,7 @@
                 $('button#modal-top-up-close').on('click', function() {
                     $('#modal-top-up').modal('hide');
                 });
-            })
+            }) */
             var table = new DataTable('#product-enquiry-table', {
                 processing: true,
                 search: {

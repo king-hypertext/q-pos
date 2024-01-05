@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\v1;
 
+use App\Models\v1\Orders;
 use App\Models\v1\Customers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class CustomerController extends Controller
@@ -48,8 +50,10 @@ class CustomerController extends Controller
     }
     public function show($id)
     {
+        $data = Orders::where('customer_id', $id)->where('created_at', Carbon::now()->format('Y-m-d'))->get();
         $customer = Customers::find($id);
-        return view("pages.view-stock", ["customer" => $customer, "title" => "Create Order"]);
+        $order_date = Orders::where('customer_id', $id)->where('created_at', Carbon::now()->format('Y-m-d'))->value('created_at');
+        return view("pages.view-stock", ["customer" => $customer, "title" => "Create Order", "orders" => $data, 'order_date'=>$order_date]);
     }
     public function edit($id)
     {
@@ -90,6 +94,15 @@ class CustomerController extends Controller
             ]);
         }
         return back()->with('success', 'Customer Updated');
+    }
+    public function filter_and_update(Request $request)
+    {
+        $query = DB::table('orders')->where('customer_id', $request->id)->where('created_at', $request->date)->get();
+        $date = '';
+        foreach ($query as $q) {
+            $date = $q->created_at;
+        }
+        return count($query) !== 0 ? response()->json(['success' => route('order.show.save', [$request->id]), 'date' => $date]) : response()->json(['empty' => 'No Records Found']);
     }
     public function destroy($id)
     {

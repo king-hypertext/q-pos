@@ -8,6 +8,7 @@ use App\Models\v1\Returns;
 use App\Models\v1\Products;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class ReturnController extends Controller
@@ -25,33 +26,31 @@ class ReturnController extends Controller
     }
     public function create(Request $request)
     {
-        $product_id = Products::where('name', $request->input('product-name'))->value('id');
-        $request->validate([
-            "customer_id" => "required",
-            "product-name" => "required",
-            "customer-name" => "required",
-            "price" => "required",
-            "quantity" => "required",
-            "return-quantity" => "required",
-        ]);
-        Products::where('id', $product_id)->increment('quantity', $request->input('return-quantity'));
-        Orders::where('order_number', $request->input('r_id'))->update(['return_quantity' => $request->input('return-quantity')]);
-        $amount = Orders::where('order_number', $request->input('r_id'))->value('amount');
-        Orders::where('order_number', $request->input('r_id'))->update([
-            'quantity' => $request->input('quantity') - $request->input('return-quantity'),
-            'amount' => $amount - ($request->input('return-quantity') * $request->input('price')),
+        $id = $request->id;
+        $order_id = $request->order_id;
+        $return_qty = $request->qty;
+        Products::where('name', $request->product)->increment('quantity', $return_qty);
+        $amount = Orders::where('id', $order_id)->value('amount');
+        $quatity = Orders::where('id', $order_id)->value('quantity');
+        $price = Orders::where('id', $order_id)->value('price');
+        Orders::where('id', $order_id)->update([
+            'quantity' => ($quatity - $return_qty),
+            'amount' => $amount - ($return_qty * $price),
         ]);
         Returns::insert([
             "return_id" => mt_rand(000000, 999999),
-            "product" => $request->input('product-name'),
-            "product_id" => $product_id,
+            "product" => $request->product,
+            "product_id" => $id,
             "customer" => $request->input('customer-name'),
             "customer_id" => $request->input('customer_id'),
-            "quantity" => $request->input('return-quantity'),
-            "price" => $request->input('price'),
-            "amount" => ($request->input('return-quantity') * $request->input('price')),
+            "quantity" => $return_qty,
+            "price" => $price,
+            "amount" => ($return_qty * $price),
             "created_at" => Carbon::now()->format('Y-m-d')
         ]);
-        return back()->with('success', 'Return Succeed');
+        DB::table('customer_invoices')->where('product', $request->product)->where('customer_id', $request->customer_id)->decrement('quantity', $return_qty);
+        DB::table('customer_stock')->where('product', $request->product)->where('customer_id', $request->customer_id)->decrement('quantity', $return_qty);
+        Orders::where('id', $order_id)->increment('return_quantity', $return_qty);
+        return response()->json(['success' => 'Return Success']);
     }
 }

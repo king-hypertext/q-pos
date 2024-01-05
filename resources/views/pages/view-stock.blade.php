@@ -1,6 +1,6 @@
 @extends('layout.layout')
 @section('content')
-    <div class="container">
+    <div class="container"> 
         @php
             use Illuminate\Support\Facades\DB;
             $products = DB::table('products')
@@ -32,9 +32,7 @@
                 </div>
             </div>
         </div>
-        <a href="{{ route('order.show.update', [$customer->id]) }}" target="_blank" rel="noopener noreferrer" role="link"
-            title="click to edit and update today orders" class="btn btn-success text-lowercase">saved
-            orders</a>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#view-stock-modal">Saved Orders</button>
     </div>
     @if ($empty_q !== 0)
         <div class="alert alert-danger mt-2 text-center">Some Products are out of stock, please top up now to see them
@@ -47,7 +45,7 @@
     <div class="container">
         @if ($errors->any())
             <div class="alert alert-danger">
-                <ul class="d-flex justify-content-center">
+                <ul class="list-unstyled d-flex justify-content-center">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -57,9 +55,9 @@
     </div>
     <form autocomplete="off" id="form-invoice" action="{{ route('order.add') }}" method="post">
         @csrf
-        <input type="hidden" name="id" value="{{ $customer->id }}">
-        <input type="hidden" name="customer" value="{{ $customer->name }}">
-        <input type="hidden" name="date" value="{{ Date('Y-m-d') }}">
+        <input type="hidden" name="id" value="{{ $customer->id }}"/>
+        <input type="hidden" name="customer" value="{{ $customer->name }}"/>
+        <input type="hidden" name="date" value="{{ Date('Y-m-d') }}"/>
         <hr class="hr text-dark" />
         <h6 class="h4">Create Order</h6>
         <div class="table-responsive text-nowrap">
@@ -87,7 +85,7 @@
                     <tr class="form_row">
                         <td class="col-md-4">
                             <div class="form-group">
-                                <select class="form-select" data-select-product name="product[]" id="product">
+                                <select @required(true) class="form-select" data-select-product name="product[]" id="product">
                                     <option selected value=""> Select Product </option>
                                     @foreach ($products as $product)
                                         <option value="{{ $product->name }}">
@@ -99,7 +97,7 @@
                         </td>
                         <td class="col-md-2">
                             <div class="form-group">
-                                <input type="number" name="quantity[]" id="quantity" class="form-control qty" />
+                                <input required type="number" name="quantity[]" id="quantity" class="form-control qty" />
                             </div>
                         </td>
                         <td class="col-md-3">
@@ -135,16 +133,17 @@
             <button type="submit" class="btn btn-primary text-capitalize" title="add invoice">Save Order</button>
         </div>
     </form>
+    @include('modals.view-stock-modal')
     </div>
     @if (session('success'))
         <script>
-            const showSuccessAlert = Swal.mixin({
-                position: 'top-end',
-                toast: true,
-                timer: 6500,
-                showConfirmButton: false,
-                timerProgressBar: false,
-            });
+            // const showSuccessAlert = Swal.mixin({
+            //     position: 'top-end',
+            //     toast: true,
+            //     timer: 6500,
+            //     showConfirmButton: false,
+            //     timerProgressBar: false,
+            // });
             showSuccessAlert.fire({
                 icon: 'success',
                 text: '{{ session('success') }}',
@@ -157,7 +156,7 @@
 @endsection
 @section('js')
     <script>
-        var p, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15, u16, u17, u18, u19, u20, u21, u22, u23,
+        var u, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15, u16, u17, u18, u19, u20, u21, u22, u23,
             u24,
             u25, u26, u27, u28, u29, u30, u31, u32, u33, u34, u35, u36, u37, u38, u39, u40, u41, u42, u43, u44, u45, u46,
             u47, u48, u49, u50, u51, u52, u53, u54, u55, u56, u57, u58, u59, u60, u61, u62, u63, u64, u65, u66, u67, u68,
@@ -169,7 +168,7 @@
             p47, p48, p49, p50, p51, p52, p53, p54, p55, p56, p57, p58, p59, p60, p61, p62, p63, p64, p65, p66, p67, p68,
             p69, p70, p71, p72, p73, p74, p75, p76, p77, p78, p79, p80, p81, p82, p83, p84, p85, p86, p87, p88, p89, p90,
             p91, p92, p93, p94, p95, p96, p97, p98, p99;
-        var p, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23,
+        var t, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23,
             t24,
             t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40, t41, t42, t43, t44, t45, t46,
             t47, t48, t49, t50, t51, t52, t53, t54, t55, t56, t57, t58, t59, t60, t61, t62, t63, t64, t65, t66, t67, t68,
@@ -246,15 +245,13 @@
                             });
                         q1 &&
                             (q1.onkeyup = function() {
-                                t1.value = Number.parseFloat(u1.value) * Number.parseFloat(q1
-                                    .value);
+                                t1.value = Number.parseFloat(u1.value) * Number.parseFloat(q1.value);
                             });
 
                         p2 = $("#product_2")[0];
                         u2 = $("#price_2")[0];
                         q2 = $("#quantity_2")[0];
-                        t2 = $(
-                            "#total_2")[0];
+                        t2 = $("#total_2")[0];
                         p2 &&
                             (p2.onchange = function(elem) {
                                 elem = elem.target.value;
@@ -291,8 +288,7 @@
                             });
                         q3 &&
                             (q3.onkeyup = function() {
-                                t3.value = Number.parseFloat(u3.value) * Number.parseFloat(q3
-                                    .value);
+                                t3.value = Number.parseFloat(u3.value) * Number.parseFloat(q3.value);
                             });
 
                         p4 = $("#product_4")[0];

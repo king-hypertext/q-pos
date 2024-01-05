@@ -1,11 +1,10 @@
 @extends('layout.layout')
 @section('content')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
-            <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Orders</li>
-            <li class="breadcrumb-item"></li>
-        </ol>
+    <nav>
+        <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+            <a href="{{ route('orders.customer') }}" class="nav-link active" aria-selected="true">Customers</a>
+            <a href="{{ route('orders.supplier') }}" class="nav-link">suppliers</a>
+        </div>
     </nav>
     <div class="container-fluid">
         <div class="d-flex justify-content-end me-1 mb-2">
@@ -26,12 +25,12 @@
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">ORDER NUMBER</th>
-                        <th scope="col">CUSTOMER NAME</th>
+                        <th scope="col">ORDER_ID</th>
+                        <th scope="col">WORKER</th>
                         <th scope="col">PRODUCT</th>
                         <th scope="col">QUANTITY</th>
-                        <th scope="col">PRICE(GHS)</th>
-                        <th scope="col">AMOUNT(GHS)</th>
+                        <th scope="col">PRICE</th>
+                        <th scope="col">AMOUNT</th>
                         <th title="return quantity" scope="col">RETURNS</th>
                         <th scope="col">DATE</th>
                         <th scope="col">DAY</th>
@@ -153,12 +152,80 @@
                     }
                 })
         }
+        const showSuccessAlert = Swal.mixin({
+            position: 'top-end',
+            toast: true,
+            timer: 6500,
+            showConfirmButton: false,
+            timerProgressBar: false,
+        });
         $(document).ready(function() {
             $('input[name="order-daterange" ]').daterangepicker({
                 startDate: moment().subtract(1, 'M'),
                 endDate: moment()
             });
+
+            function addCell(tr, content, colSpan = 1) {
+                let td = document.createElement('th');
+                td.colSpan = colSpan;
+                td.textContent = content;
+                tr.appendChild(td);
+            }
             var table = new DataTable('#order-table', {
+                order: [
+                    [3, 'asc']
+                ],
+                rowGroup: {
+                    startRender: null,
+                    endRender: function(rows, group) {
+                        let totalAmount =
+                            rows
+                            .data()
+                            .pluck('amount').map((str) => parseInt(str)).reduce((a, b) => a + b, 0);
+
+                        totalAmount = $.fn.dataTable.render
+                            .number(',', '.', 2, 'GHS')
+                            .display(totalAmount);
+
+                        let totalQuantity =
+                            rows
+                            .data()
+                            .pluck('quantity')
+                            .reduce(function(a, b) {
+                                return a + b
+                            }, 0);
+
+                        let tr = document.createElement('tr');
+
+                        addCell(tr, 'Sum for ' + group, 4);
+                        addCell(tr, totalQuantity.toFixed(0));
+                        addCell(tr, '');
+                        addCell(tr, totalAmount);
+                        addCell(tr, rows.data().pluck('return_quantity').reduce(function(a, b) {
+                            return a + b
+                        }, 0));
+
+                        return tr;
+                    },
+                    dataSrc: 'product'
+                },
+                drawCallback: function() {
+                    var api = this.api(),
+                        last = null;
+                    var rows = api.rows({
+                        page: 'current'
+                    }).nodes();
+                    api.column(3, {
+                        page: 'current'
+                    }).data().each(function(group, i) {
+                        if (last !== group) {
+                            $(rows).eq(i).before(
+                                '<tr><th style="background-color: #d1d1d1;" colspan="11">' +
+                                group + '</th></tr>');
+                            last = group;
+                        }
+                    })
+                },
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api(),
                         data;
@@ -177,14 +244,14 @@
                     }).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                    $(api.column(6).footer()).html(' ' + pageTotal);
+                    $(api.column(6).footer()).html('GHS ' + pageTotal);
                 },
                 scrollY: false,
                 processing: true,
                 serverSide: true,
                 pageLength: 500,
                 ajax: {
-                    url: "{{ route('orders') }}",
+                    url: "{{ route('orders.customer') }}",
                     data: function(data) {
                         data.from_date = $('input[name="order-daterange" ]')
                             .data('daterangepicker')
@@ -288,28 +355,52 @@
             $('input[aria-controls="order-table"]').on('keyup', function() {
                 table.search(this.value).draw();
             });
-        });
-        $(document).ready(function() {
-            $(document).on('click', '.btn_return_order', function(e) {
-                $('#return-quantity').attr('autofocus', 'true');
-                $.ajax({
-                    url: "/order/show/" + e.target.id,
-                    success: function(data) {
-                        console.log(data);
-                        $('#productName').val(data.product).addClass('active');
-                        $('#customerName').val(data.customer).addClass('active');
-                        $('#unitPrice').val(data.price).addClass('active');
-                        $('#quantity').val(data.quantity).addClass('active');
-                        $('#cust-id').val(data.customer_id).addClass('active');
-                        $('#return-quantity').max = data.quantity;
-                        $('input#r_id').val(data.order_number);
+            //handle return form
+            $(document).on('click', '.btn-return', function(e) {
+                e.preventDefault();
+                var quantity_to_return = Number.parseInt(e.currentTarget.form[0].value);
+                if (e.currentTarget.form[0].id == 0) {
+                    alert('Cannot return ORDER with 0 quantity');
+                    table.draw();
+                } else {
+                    if (!quantity_to_return) {
+                        alert('quantity field is required')
+                        table.draw();
+                    } else {
+                        if (quantity_to_return > e.currentTarget.form[0].id) {
+                            alert('The entered quantity is greater than the ordered quantity');
+                        } else {
+                            $.ajax({
+                                url: '/return/add',
+                                type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "id": e.currentTarget.form[0].id,
+                                    "product": e.currentTarget.form[4].value,
+                                    "qty": quantity_to_return,
+                                    "customer_id": e.currentTarget.form[2].value,
+                                    "order_id": e.currentTarget.form[3].value,
+                                    "customer-name": e.currentTarget.form[1].value
+                                },
+                                success: function(res) {
+                                    console.log(res);
+                                    if (res.success) {
+                                        quantity_to_return == 0;
+                                        e.currentTarget.form.reset();
+                                        showSuccessAlert.fire({
+                                            icon: 'success',
+                                            text: res.success,
+                                            padding: '10px',
+                                            width: 'auto'
+                                        });
+                                        table.draw();
+                                    }
+                                }
+                            })
+                        }
                     }
-                });
-                $('#modal-return').modal('show');
-                $('[data-bs-dismiss="modal"]').on('click', () => {
-                    $('#modal-return').modal('hide');
-                })
-            })
+                }
+            });
         })
     </script>
 @endsection

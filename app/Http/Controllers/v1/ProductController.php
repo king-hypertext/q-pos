@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1;
 
 use Carbon\Carbon;
 use App\Models\v1\Products;
+use App\Models\v1\Suppliers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -28,12 +29,17 @@ class ProductController extends Controller
             return view('pages.product-enquiry', ['title' => 'Expired Products', 'data' => $expired_products]);
         }
     }
+    public function AddProduct()
+    {
+
+        return view('pages.add_product', compact(''));
+    }
     /** insert new data into database */
     public function create(Request $request)
     {
-        dd($request);
+        $category = Suppliers::where('name', $request->supplier)->value('category');
         $request->validate([
-            "product-name" => "required|string|unique:products,name",
+            "product-name" => "required|unique:products,name",
             "unit-price" => "required|numeric",
             "supplier" => "required|string|exists:suppliers,name",
             "expiry-date" => "required",
@@ -54,8 +60,9 @@ class ProductController extends Controller
             "supplier" => $request->input("supplier"),
             "prod_date" => $request->input("prod-date"),
             "image" => $image,
+            "category" => $category,
             "expiry_date" => $request->input("expiry-date"),
-            "created_at" => Carbon::now()->format("Y-m-d"),
+            "created_at" => Carbon::now()->format("Y-m-d H-i-s"),
         ]);
         return back()->with("success", "Product Added");
     }
@@ -92,36 +99,40 @@ class ProductController extends Controller
     public function update(Request $request)
     {
         $product = Products::find($request->id);
+        // dd($product);
+        $category = Suppliers::where('name', $request->input("edit-supplier"))->value('category');
         $request->validate([]);
         $image = '';
-        if ($request->hasFile("product-image")) {
+        if ($request->hasFile("edit-product-image")) {
             $request->validate([
-                "product-image" => "required|file|mimes:png,jpg,jpeg,webp",
+                "edit-product-image" => "required|file|mimes:png,jpg,jpeg,webp",
             ]);
             if (file_exists(public_path() . "/assets/images/products" . $product->image)) {
                 @unlink(public_path() . "/assets/images/products" . $product->image);
             }
-            $file = $request->file("product-image");
-            $image = time() . $request->input("product-name") . '.' . $file->extension();
+            $file = $request->file("edit-product-image");
+            $image = time() . $request->input("edit-product-name") . '.' . $file->extension();
             $file->move(public_path('assets/images/products'),  $image);
             Products::where('id', $request->id)->update([
-                "name" => $request->input("product-name"),
-                "price" => $request->input("unit-price"),
-                "batch_number" => $request->input("batch-number"),
-                "supplier" => $request->input("supplier"),
-                "prod_date" => $request->input("prod-date"),
+                "name" => $request->input("edit-product-name"),
+                "price" => $request->input("edit-unit-price"),
+                "batch_number" => $request->input("edit-batch-number"),
+                "supplier" => $request->input("edit-supplier"),
+                "prod_date" => $request->input("edit-prod-date"),
                 "image" => $image,
-                "expiry_date" => $request->input("expiry-date"),
+                "category" => $category,
+                "expiry_date" => $request->input("edit-expiry-date"),
                 "updated_at" => Carbon::now()->format("Y-m-d"),
             ]);
         } else {
             Products::where('id', $request->id)->update([
-                "name" => $request->input("product-name"),
-                "price" => $request->input("unit-price"),
-                "batch_number" => $request->input("batch-number"),
-                "supplier" => $request->input("supplier"),
-                "prod_date" => $request->input("prod-date"),
-                "expiry_date" => $request->input("expiry-date"),
+                "name" => $request->input("edit-product-name"),
+                "price" => $request->input("edit-unit-price"),
+                "batch_number" => $request->input("edit-batch-number"),
+                "supplier" => $request->input("edit-supplier"),
+                "prod_date" => $request->input("edit-prod-date"),
+                "category" => $category,
+                "expiry_date" => $request->input("edit-expiry-date"),
                 "updated_at" => Carbon::now()->format("Y-m-d"),
             ]);
         }

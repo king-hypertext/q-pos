@@ -75,7 +75,7 @@
                             </h2>
                         </div>
                         <div class="col-4 text-right">
-                            <a href="{{ route('orders') }}" class="btn btn-outline-light">View</a>
+                            <a href="{{ route('orders.customer') }}" class="btn btn-outline-light">View</a>
                         </div>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
                             </h2>
                         </div>
                         <div class="col-4 text-right">
-                            <span><a href="{{ route('orders') }}" class="btn btn-outline-light">View</a></span>
+                            <span><a href="{{ route('orders.customer') }}" class="btn btn-outline-light">View</a></span>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                 <div class="card-statistic-3 p-4">
                     <div class="card-icon card-icon-large"><i class=""></i></div>
                     <div class="mb-4">
-                        <h5 class="card-title mb-0">Total Workers</h5>
+                        <h5 class="card-title mb-0">Total Workers Van</h5>
                     </div>
                     <div class="row align-items-center mb-2 d-flex">
                         <div class="col-8">

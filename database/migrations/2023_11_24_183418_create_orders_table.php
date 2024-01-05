@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('order_number')->unique();
-            $table->longText('order_token')->unique();
+            $table->longText('order_token');
             $table->integer('customer_id');
             $table->string('customer');
             $table->string('product');
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('price');
             $table->decimal('amount');
             $table->string('day');
+            $table->string('invoice_time');
             $table->date('created_at');
             $table->date('updated_at')->nullable();
         });

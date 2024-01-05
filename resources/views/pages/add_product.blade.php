@@ -1,7 +1,7 @@
 @extends('layout.layout')
 @section('content')
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8 position-sticky top-0">
             <div class="card rounded-3 shadow">
                 <div class="modal-body p-2">
                     <div class="row justify-content-center">
@@ -85,7 +85,7 @@
         </div>
         @php
             use App\Models\v1\Products;
-            $products = Products::all();
+            $products = Products::latest()->get();
         @endphp
         <div class="col-md-4">
             <div class="container">
@@ -106,6 +106,23 @@
             </div>
         </div>
     </div>
+    @if (session('success'))
+        <script>
+            const showSuccessAlert = Swal.mixin({
+                position: 'top-end',
+                toast: true,
+                timer: 6500,
+                showConfirmButton: false,
+                timerProgressBar: false,
+            });
+            showSuccessAlert.fire({
+                icon: 'success',
+                text: '{{ session('success') }}',
+                padding: '10px',
+                width: 'auto'
+            });
+        </script>
+    @endif
     <script type="text/javascript">
         var img_wrapper = $('.image-preview-wrapper');
         img_wrapper.hide();
