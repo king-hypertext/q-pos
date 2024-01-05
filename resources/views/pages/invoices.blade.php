@@ -105,7 +105,7 @@
         </div>
         <div class="invoice-header">
             <div class="row align-end">
-                <div class="flex-column">Date: {{ Date('Y-M-d') }}</div>
+                <div class="flex-column">Date: {{ Carbon::parse($date)->format('Y-M-d') }}</div>
             </div>
             <div class="row align-end">
                 <div class="flex-column">Invoice Number : 667890</div>
@@ -182,15 +182,6 @@
             </tbody>
         </table>
     </div>
-    {{-- <script>
-        const sumNumbers = (array) => array.reduce((totalNumbers, Number) => totalNumbers + Number, 0);
-        var arr = [];
-        var total = document.querySelector('.total');
-        var td_amount = Array.from(document.querySelectorAll('.amount')).forEach(td => {
-            arr.push(Number.parseFloat(td.innerText));
-            total.textContent = sumNumbers(arr).toFixed(2);
-        })
-    </script> --}}
 </body>
 
 </html>

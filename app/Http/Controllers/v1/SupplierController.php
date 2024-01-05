@@ -181,73 +181,76 @@ class SupplierController extends Controller
         $supplier =  $request->supplier;
 
         $id = $request->id;
-        DB::table('supplier_invoices')->where('supplier_id', $id)->where('created_at', $order_date)->delete();
-        DB::table('supplier_stock')->where('supplier_id', $id)->where('created_at', $order_date)->delete();
+        $orders = DB::table('supplier_invoices')->where('supplier_id', $id)->where('created_at', $order_date)->get();
+
+        foreach ($orders as $key => $order) {
+            $q = DB::table('products')->where('name', $order->product)->decrement('quantity', $order->quantity);
+        }
+        // dd($request->all(), $q);
+        $q1 = DB::table('supplier_invoices')->where('supplier_id', $id)->where('created_at', $order_date)->delete();
+        $q2 = DB::table('supplier_stock')->where('supplier_id', $id)->where('created_at', $order_date)->delete();
         $q3 = Invoice::where('for', 'supplier')->where('type', 'stock')->where('name', $supplier)->where('for_id', $id)->where('created_at', $order_date)->delete();
-        // dd($q1, $q2, $q3, $request->all());
 
-        if ($q3) {
-            $request->validate([
-                "supplier" => "required|exists:suppliers,name",
-                "product.*" => "required|exists:products,name",
-            ]);
+        // dd($q, $q1, $q2, $q3, $request->all());
 
-            $days = [
-                "Sunday",
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
+        $request->validate([
+            "supplier" => "required|exists:suppliers,name",
+            "product.*" => "required|exists:products,name",
+        ]);
+
+        $days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+        ];
+        $week_day = Carbon::now()->dayOfWeek;
+        for ($i = 0; $i < count($product); $i++) {
+            $data = [
+                'order_number' => mt_rand(000011, 990099),
+                'supplier_id' => $id,
+                'order_token' => _token,
+                'invoice_number' => $request->input('supplier-invoice'),
+                'supplier' => $supplier,
+                'product' => $product[$i],
+                'price' => $price[$i],
+                'quantity' => $quantity[$i],
+                'amount' => ($price[$i] * $quantity[$i]),
+                'day' => $days[$week_day],
+                'category' => $request->category,
+                'invoice_time' => Date('Y-m-d-H-i'),
+                'created_at' => $request->order_date,
+                'updated_at' => Carbon::now()->format('Y-m-d')
             ];
-            $week_day = Carbon::now()->dayOfWeek;
-            for ($i = 0; $i < count($product); $i++) {
-                $data = [
-                    'order_number' => mt_rand(000011, 990099),
-                    'supplier_id' => $id,
-                    'order_token' => _token,
-                    'invoice_number' => $request->input('supplier-invoice'),
-                    'supplier' => $supplier,
-                    'product' => $product[$i],
-                    'price' => $price[$i],
-                    'quantity' => $quantity[$i],
-                    'amount' => ($price[$i] * $quantity[$i]),
-                    'day' => $days[$week_day],
-                    'category' => $request->category,
-                    'invoice_time' => Date('Y-m-d-H-i'),
-                    'created_at' => $request->order_date,
-                    'updated_at' => Carbon::now()->format('Y-m-d')
-                ];
-                $invoice = [
-                    "supplier_id" => $id,
-                    "product" => $product[$i],
-                    "quantity" => $quantity[$i],
-                    "price" => $price[$i],
-                    "amount" => ($price[$i] * $quantity[$i]),
-                    "created_at" => $request->order_date,
-                    "updated_at" => Carbon::now()->format('Y-m-d')
-                ];
-                DB::table('supplier_stock')->insert($data);
-                DB::table('products')
-                    ->where('name', $product[$i])
-                    ->increment('quantity', $quantity[$i]);
-                SupplierInvoices::insert($invoice);
-            }
-            $total = DB::table('supplier_stock')->where('order_token', _token)->sum('amount');
-
-            Invoice::create([
-                "token" => _token,
-                "name" => $supplier,
-                "for" => "supplier",
-                "for_id" => $id,
-                "type" => "stock",
-                "invoice_number" => mt_rand(100001, 999990),
-                "amount" => $total,
+            $invoice = [
+                "supplier_id" => $id,
+                "product" => $product[$i],
+                "quantity" => $quantity[$i],
+                "price" => $price[$i],
+                "amount" => ($price[$i] * $quantity[$i]),
                 "created_at" => $request->order_date,
                 "updated_at" => Carbon::now()->format('Y-m-d')
-            ]);
+            ];
+            DB::table('supplier_stock')->insert($data);
+            DB::table('products')->where('name', $product[$i])->increment('quantity', $quantity[$i]);
+            SupplierInvoices::insert($invoice);
         }
+        $total = DB::table('supplier_stock')->where('order_token', _token)->sum('amount');
+
+        Invoice::create([
+            "token" => _token,
+            "name" => $supplier,
+            "for" => "supplier",
+            "for_id" => $id,
+            "type" => "stock",
+            "invoice_number" => mt_rand(100001, 999990),
+            "amount" => $total,
+            "created_at" => $request->order_date,
+            "updated_at" => Carbon::now()->format('Y-m-d')
+        ]);
         return back()->with('success', 'Invoice Saved');
     }
     public function deleteOrder($id)

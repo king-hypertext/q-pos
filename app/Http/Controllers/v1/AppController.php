@@ -101,8 +101,8 @@ class AppController extends Controller
     {
         $customer =  DB::table('customer_stock')->select('customer')->where('order_token', $token)->value('supplier');
         $date =  DB::table('customer_stock')->select('invoice_time')->where('order_token', $token)->value('invoice_date');
+        $invioce_date =  DB::table('customer_stock')->select('created_at')->where('order_token', $token)->value('created_at');
         $id = Orders::where('order_token', $token)->value('customer_id');
-
         $customer_data = Customers::find($id);
         $customer_data->fresh();
         Pdf::loadView(
@@ -110,7 +110,8 @@ class AppController extends Controller
             [
                 'invoices' => DB::table('customer_stock')->where('order_token', $token)->get(),
                 'supplier' => $customer_data,
-                'total' => DB::table('customer_stock')->where('order_token', $token)->sum('amount')
+                'total' => DB::table('customer_stock')->where('order_token', $token)->sum('amount'),
+                'date' => $invioce_date
             ]
         )->save(public_path("/assets/pdf/invoices/" . $customer . "-" . $date . ".pdf"));
 
@@ -133,7 +134,7 @@ class AppController extends Controller
                 'total' => DB::table('supplier_stock')->where('order_token', $token)->sum('amount'),
                 'invoice_number' => DB::table('supplier_stock')->where('order_token', $token)->first('invoice_number'),
                 'order_number' => DB::table('supplier_stock')->where('order_token', $token)->first('order_number'),
-                'date' => DB::table('supplier_stock')->where('order_token', $token)->first('created_at')
+                'date' => DB::table('supplier_stock')->where('order_token', $token)->first('created_at'),
             ]
         )->save(public_path("/assets/pdf/invoices/" . $supplier . "-" . $date . ".pdf"));
 

@@ -162,14 +162,18 @@ class OrderController extends Controller
         $customer =  $request->customer;
 
         $id = $request->id;
-        for ($i = 0; $i < count($product); $i++) {
-            DB::table('products')->where('name', $product[$i])->increment('quantity', $quantity[$i]);
+        $data = Orders::where('customer_id', $id)->where('created_at', $order_date)->get();
+        foreach ($data as $key => $order) {
+            $q = DB::table('products')->where('name', $order->product)->increment('quantity', $order->quantity);
         }
+        // dd($q, $data);
+
         DB::table('customer_invoices')->where('customer_id', $id)->where('created_at', $order_date)->delete();
         DB::table('customer_stock')->where('customer_id', $id)->where('created_at', $order_date)->delete();
         Invoice::where('for', 'customer')->where('type', 'order')->where('name', $customer)->where('for_id', $id)->where('created_at', $order_date)->delete();
         $delete = DB::table('orders')->where('customer_id', $id)->where('created_at', $order_date)->delete();
         // dd($request->all());
+
 
         if ($delete) {
             $request->validate([
@@ -200,7 +204,7 @@ class OrderController extends Controller
                     'day' => $days[$week_day],
                     'invoice_time' => Date('Y-m-d-H-i'),
                     'created_at' => $request->order_date,
-                    'updated_at'=> Carbon::now()->format('Y-m-d')
+                    'updated_at' => Carbon::now()->format('Y-m-d')
                 ];
                 $invoice = [
                     "customer_id" => $id,
@@ -209,13 +213,11 @@ class OrderController extends Controller
                     "price" => $price[$i],
                     "amount" => ($price[$i] * $quantity[$i]),
                     "created_at" => $request->order_date,
-                    "updated_at"=> Carbon::now()->format('Y-m-d')
+                    "updated_at" => Carbon::now()->format('Y-m-d')
                 ];
                 Orders::insert($data);
                 DB::table('customer_stock')->insert($data);
-                DB::table('products')
-                    ->where('name', $product[$i])
-                    ->decrement('quantity', $quantity[$i]);
+                DB::table('products')->where('name', $product[$i])->decrement('quantity', $quantity[$i]);
                 CustomerInvoices::insert($invoice);
             }
             $total = DB::table('customer_stock')->where('order_token', _token)->sum('amount');
@@ -229,7 +231,7 @@ class OrderController extends Controller
                 "invoice_number" => mt_rand(100001, 999990),
                 "amount" => $total,
                 "created_at" => $request->order_date,
-                "updated_at"=> Carbon::now()->format('Y-m-d')
+                "updated_at" => Carbon::now()->format('Y-m-d')
             ]);
         }
         return back()->with('success', 'Invoice Updated');

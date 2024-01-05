@@ -85,16 +85,26 @@
             </form>
         </div>
     </div>
+    @if (session('success'))
+        <script>
+            const showSuccessAlert = Swal.mixin({
+                position: 'top-end',
+                toast: true,
+                timer: 6500,
+                showConfirmButton: false,
+                timerProgressBar: false,
+            });
+            showSuccessAlert.fire({
+                icon: 'success',
+                text: '{{ session('success') }}',
+                padding: '10px',
+                width: 'auto'
+            });
+        </script>
+    @endif
 @endsection
 @section('js')
-    <script>
-        const showSuccessAlert = Swal.mixin({
-            position: 'top-end',
-            toast: true,
-            timer: 6500,
-            showConfirmButton: false,
-            timerProgressBar: false,
-        });
+    <script>;
         $(document).on('click', '.btn-delete', function(e) {
             console.log(e);
             $.ajax({

@@ -52,7 +52,7 @@
                                     </td>
                                     <td class="col-md-3">
                                         <div class="form-group">
-                                            <input readonly type="number" name="price[]" type="text"
+                                            <input type="number" name="price[]" type="text"
                                                 value="{{ $order->price }}" id="price_{{ $index + 1 }}"
                                                 class="form-control u-price" value="0" />
                                         </div>
@@ -87,16 +87,27 @@
             </form>
         </div>
     </div>
+    @if (session('success'))
+        <script>
+            const showSuccessAlert = Swal.mixin({
+                position: 'top-end',
+                toast: true,
+                timer: 6500,
+                showConfirmButton: false,
+                timerProgressBar: false,
+            });
+            showSuccessAlert.fire({
+                icon: 'success',
+                text: '{{ session('success') }}',
+                padding: '10px',
+                width: 'auto'
+            });
+        </script>
+    @endif
 @endsection
 @section('js')
     <script>
-        const showSuccessAlert = Swal.mixin({
-            position: 'top-end',
-            toast: true,
-            timer: 6500,
-            showConfirmButton: false,
-            timerProgressBar: false,
-        });
+        
         $(document).on('click', '.btn-delete', function(e) {
             $.ajax({
                 url: "/order/supplier/saved/delete/" + e.target.id,
