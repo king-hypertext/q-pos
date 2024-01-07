@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('price');
             $table->decimal('amount');
             $table->date('created_at');
+            $table->date('order_date');
             $table->date('updated_at')->nullable();
         });
     }

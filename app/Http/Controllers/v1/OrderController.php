@@ -23,7 +23,7 @@ class OrderController extends Controller
         if ($request->ajax()) {
             $data = Orders::select('*')->where('quantity', '>=', 0);
             if ($request->filled('from_date') && $request->filled('to_date')) {
-                $data = $data->whereBetween('created_at', [$request->from_date, $request->to_date]);
+                $data = $data->whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('Action', function ($row) {
@@ -34,6 +34,7 @@ class OrderController extends Controller
                             <input type='hidden' name='customer_id' value='$row->customer_id'/>
                             <input type='hidden' name='order_id' value='$row->id'/>
                             <input type='hidden' name='product' value='$row->product'/>
+                            <input type='hidden' name='order_date' value='$row->created_at'/>
                             <button type='submit' class='btn btn-sm btn-primary btn-return text-capitalize ms-1'>Return</button>
                         </div>
                     </form>";
@@ -137,11 +138,7 @@ class OrderController extends Controller
             "amount" => $total,
             "created_at" => Carbon::now()->format('Y-m-d')
         ]);
-        $customer_data = Customers::find($id);
-        $customer_data->fresh();
-        Pdf::loadView('pages.invoices', ['invoices' => DB::table('customer_stock')->where('order_token', _token)->get(), 'supplier' => $customer_data, 'total' => DB::table('customer_stock')->where('order_token', _token)->sum('amount')])
-            ->save(public_path("/assets/pdf/invoices/" . $customer . "-" . Date('Y-m-d-H-i') . ".pdf"));
-        return redirect()->route('customer.show')->with('success', 'Invoice Saved');
+       return redirect()->route('customer.show', [$id])->with('success', 'Invoice Saved');
     }
 
     public function show_and_update(Request $request, $customer_id)

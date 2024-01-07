@@ -33,9 +33,9 @@
                         <th scope="col">PRODUCT</th>
                         <th scope="col">IMAGE</th>
                         <th scope="col">PRICE(GHS)</th>
-                        <th scope="col">AVAILABLE QTY</th>
+                        <th scope="col">AVAIL. QTY</th>
                         <th scope="col">SUPPLIED BY</th>
-                        <th scope="col">CATEGORY</th>
+                        <th scope="col">CAT.</th>
                         <th scope="col">PROD. DATE</th>
                         <th scope="col">EXPIRY DATE</th>
                         <th scope="col">Actions</th>
@@ -264,7 +264,8 @@
                         $('select[name="edit-supplier"]').val(data.supplier);
                         $('#productionDate').val(data.prod_date).addClass('active');
                         $('#expiryDate').val(data.expiry_date).addClass('active');
-                        $('img#server-preview')[0].src = "/assets/images/products/" + data.image;
+                        $('img#server-preview')[0].src = "/assets/images/products/" + data
+                        .image;
                         $('h5#m-e-title')[0].textContent = `Edit Product ${data.name}`;
                     }
                 });
@@ -330,7 +331,7 @@
                     title: 'All Products',
                     filename: 'products',
                     exportOptions: {
-                        columns: [0, 1, 3, 4, 5, 6, 7]
+                        columns: [0, 1, 3, 4, 5, 6, 7, 8]
                     }
                 },
                 {
@@ -340,7 +341,7 @@
                     extend: 'pdf',
                     filename: 'products',
                     exportOptions: {
-                        columns: [0, 1, 3, 4, 5, 6, 7]
+                        columns: [0, 1, 3, 4, 5, 6, 7, 8]
                     }
                 },
                 {
@@ -350,7 +351,7 @@
                     extend: 'print',
                     filename: 'products',
                     exportOptions: {
-                        columns: [0, 1, 3, 4, 5, 6, 7]
+                        columns: [0, 1, 3, 4, 5, 6, 7, 8]
                     }
                 },
             ]

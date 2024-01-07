@@ -17,6 +17,7 @@ return new class extends Migration
             $table->longText('token');
             $table->string('type')->default('orders');
             $table->string('for')->default('customer');
+            $table->integer('for_id');
             $table->string('name');
             $table->decimal('amount');            
             $table->date('created_at');

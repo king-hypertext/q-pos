@@ -380,6 +380,7 @@
                                     "qty": quantity_to_return,
                                     "customer_id": e.currentTarget.form[2].value,
                                     "order_id": e.currentTarget.form[3].value,
+                                    "order_date": e.currentTarget.form[5].value,
                                     "customer-name": e.currentTarget.form[1].value
                                 },
                                 success: function(res) {

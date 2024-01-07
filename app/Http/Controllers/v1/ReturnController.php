@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\v1;
 
-use Carbon\Carbon;
 use App\Models\v1\Orders;
 use App\Models\v1\Returns;
 use App\Models\v1\Products;
@@ -26,9 +25,14 @@ class ReturnController extends Controller
     }
     public function create(Request $request)
     {
-        $id = $request->id;
         $order_id = $request->order_id;
+        $order_date = $request->order_date;
         $return_qty = $request->qty;
+        $product_id = Products::where('name', $request->product)->value('id');
+
+        return Returns::where('product_id', $product_id)->where('customer_id', $request->input('customer_id'))->where('order_date', $order_date)->get()->dd();
+        $request->dd();
+
         Products::where('name', $request->product)->increment('quantity', $return_qty);
         $amount = Orders::where('id', $order_id)->value('amount');
         $quatity = Orders::where('id', $order_id)->value('quantity');
@@ -40,13 +44,13 @@ class ReturnController extends Controller
         Returns::insert([
             "return_id" => mt_rand(000000, 999999),
             "product" => $request->product,
-            "product_id" => $id,
+            "product_id" => $product_id,
             "customer" => $request->input('customer-name'),
             "customer_id" => $request->input('customer_id'),
             "quantity" => $return_qty,
             "price" => $price,
             "amount" => ($return_qty * $price),
-            "created_at" => Carbon::now()->format('Y-m-d')
+            "created_at" => now()->format('Y-m-d')
         ]);
         DB::table('customer_invoices')->where('product', $request->product)->where('customer_id', $request->customer_id)->decrement('quantity', $return_qty);
         DB::table('customer_stock')->where('product', $request->product)->where('customer_id', $request->customer_id)->decrement('quantity', $return_qty);
