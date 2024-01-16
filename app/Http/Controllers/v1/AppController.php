@@ -34,6 +34,7 @@ class AppController extends Controller
             DB::table("users")->update(["login" => Carbon::now()]);
             return redirect()->intended(RouteServiceProvider::HOME);
         }
+        $request->session()->regenerate();
         return back()->with("error", "Invalid credentials");
     }
     public function handleLogout(Request $request)

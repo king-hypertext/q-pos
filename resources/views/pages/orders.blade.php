@@ -356,49 +356,84 @@
                 table.search(this.value).draw();
             });
             //handle return form
+            $(document).on('click', '.btn-reset', function(e) {
+                var Id = Number.parseInt(e.currentTarget.id);
+                var order_id = e.currentTarget.dataset.id,
+                    order_qty = e.currentTarget.dataset.order_quantity;
+                    console.log(order_qty);
+                $.ajax({
+                    url: '/return/reset/' + Id + '/' + order_id,
+                    type: 'POST',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "order_quantity": order_qty
+                    },
+                    success: function(res) {
+                        if (res.success) {
+                            showSuccessAlert.fire({
+                                icon: 'success',
+                                text: res.success,
+                                padding: '10px',
+                                width: 'auto'
+                            });
+                            table.draw();
+                        }
+                    },
+                    error: function(res) {
+                        console.log(res);
+                    }
+                })
+                console.log(e.currentTarget, order_id);
+            });
             $(document).on('click', '.btn-return', function(e) {
                 e.preventDefault();
                 var quantity_to_return = Number.parseInt(e.currentTarget.form[0].value);
-                if (e.currentTarget.form[0].id == 0) {
-                    alert('Cannot return ORDER with 0 quantity');
+                if (!quantity_to_return) {
+                    alert('quantity field is required')
                     table.draw();
                 } else {
-                    if (!quantity_to_return) {
-                        alert('quantity field is required')
-                        table.draw();
+                    if (quantity_to_return > e.currentTarget.form[0].id) {
+                        alert('The entered value is greater than the ordered quantity');
                     } else {
-                        if (quantity_to_return > e.currentTarget.form[0].id) {
-                            alert('The entered quantity is greater than the ordered quantity');
-                        } else {
-                            $.ajax({
-                                url: '/return/add',
-                                type: 'POST',
-                                data: {
-                                    "_token": "{{ csrf_token() }}",
-                                    "id": e.currentTarget.form[0].id,
-                                    "product": e.currentTarget.form[4].value,
-                                    "qty": quantity_to_return,
-                                    "customer_id": e.currentTarget.form[2].value,
-                                    "order_id": e.currentTarget.form[3].value,
-                                    "order_date": e.currentTarget.form[5].value,
-                                    "customer-name": e.currentTarget.form[1].value
-                                },
-                                success: function(res) {
-                                    console.log(res);
-                                    if (res.success) {
-                                        quantity_to_return == 0;
-                                        e.currentTarget.form.reset();
-                                        showSuccessAlert.fire({
-                                            icon: 'success',
-                                            text: res.success,
-                                            padding: '10px',
-                                            width: 'auto'
-                                        });
-                                        table.draw();
-                                    }
+                        $.ajax({
+                            url: '/return/add',
+                            type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "order_quantity": e.currentTarget.form[0].id,
+                                "product": e.currentTarget.form[4].value,
+                                "return_quantity": quantity_to_return,
+                                "order_date": e.currentTarget.form[5].value,
+                                "customer_id": e.currentTarget.form[2].value,
+                                "order_id": e.currentTarget.form[3].value,
+                                "customer": e.currentTarget.form[1].value,
+                                "returns": e.currentTarget.form[6].value
+                            },
+                            success: function(res) {
+                                console.log(res);
+                                if (res.success) {
+                                    quantity_to_return == 0;
+                                    e.currentTarget.form.reset();
+                                    showSuccessAlert.fire({
+                                        icon: 'success',
+                                        text: res.success,
+                                        padding: '10px',
+                                        width: 'auto'
+                                    });
+                                    table.draw();
+                                } else if (res.failed) {
+                                    quantity_to_return == 0;
+                                    e.currentTarget.form.reset();
+                                    showSuccessAlert.fire({
+                                        icon: 'warning',
+                                        text: res.failed,
+                                        padding: '10px',
+                                        width: 'auto'
+                                    });
+                                    table.draw();
                                 }
-                            })
-                        }
+                            }
+                        })
                     }
                 }
             });

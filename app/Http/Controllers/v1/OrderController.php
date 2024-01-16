@@ -27,18 +27,40 @@ class OrderController extends Controller
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('Action', function ($row) {
+                        $rtn = "<button type='button' id='$row->return_quantity' data-id='$row->id' data-order_quantity='$row->quantity' class='btn btn-sm btn-danger btn-reset text-capitalize ms-1'>Reset</button>";
+
                         $div = "<form id='form-return' method='post'>
-                        <div class='form-group d-flex'>
-                            <input style='min-width: 75px;' required type='text' id='$row->quantity' class='return_input form-control form-control-sm me-1' placeholder='quantity' />
+                        <div class='form-group d-flex mb-1'>
+                            <input style='min-width: 45px;' required type='text' min='0' id='$row->quantity' class='return_input form-control form-control-sm me-1' placeholder='quantity' />
                             <input type='hidden' name='customer_name' value='$row->customer'/>
                             <input type='hidden' name='customer_id' value='$row->customer_id'/>
                             <input type='hidden' name='order_id' value='$row->id'/>
                             <input type='hidden' name='product' value='$row->product'/>
                             <input type='hidden' name='order_date' value='$row->created_at'/>
+                            <input type='hidden' name='returns' value='$row->return_quantity'/>
                             <button type='submit' class='btn btn-sm btn-primary btn-return text-capitalize ms-1'>Return</button>
                         </div>
                     </form>";
-                        return $div;
+                        $div1 = "<form id='form-return' method='post'>
+                        <div class='form-group d-flex mb-1'>
+                            <input style='min-width: 45px;' required type='text' min='0' id='$row->quantity' class='return_input form-control form-control-sm me-1' placeholder='quantity' />
+                            <input type='hidden' name='customer_name' value='$row->customer'/>
+                            <input type='hidden' name='customer_id' value='$row->customer_id'/>
+                            <input type='hidden' name='order_id' value='$row->id'/>
+                            <input type='hidden' name='product' value='$row->product'/>
+                            <input type='hidden' name='order_date' value='$row->created_at'/>
+                            <input type='hidden' name='returns' value='$row->return_quantity'/>
+                        </div>
+                        <div class='form-group d-flex justify-content-start'>
+                            $rtn
+                            <button type='submit' class='btn btn-sm btn-primary btn-return text-capitalize ms-1'>Return</button>
+                        </div>
+                    </form>";
+                        if ($row->return_quantity !== 0) {
+                            return  $div1;
+                        } else {
+                            return $div;
+                        }
                     })
                     ->rawColumns(['Action'])
                     ->make(true);
@@ -138,7 +160,7 @@ class OrderController extends Controller
             "amount" => $total,
             "created_at" => Carbon::now()->format('Y-m-d')
         ]);
-       return redirect()->route('customer.show', [$id])->with('success', 'Invoice Saved');
+        return redirect()->route('customer.show', [$id])->with('success', 'Invoice Saved');
     }
 
     public function show_and_update(Request $request, $customer_id)
@@ -246,5 +268,12 @@ class OrderController extends Controller
             Orders::destroy($order->id);
             return response()->json(["success" => "Order Deleted"]);
         }
+    }
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->ids;
+        return $request->dd();
+        return response()->json($ids);
+        Orders::destroy($ids);
     }
 }

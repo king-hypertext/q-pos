@@ -24,6 +24,7 @@
                     <table class="table table-borderless mb-0">
                         <thead>
                             <tr class="">
+                                <th></th>
                                 <th class="col-md-4" scope="col">Product Name</th>
                                 <th class="col-md-3" scope="col" title="Price">Unit Price</th>
                                 <th class="col-md-2" scope="col">Quantity</th>
@@ -32,6 +33,10 @@
                         <tbody>
                             @foreach ($orders as $index => $order)
                                 <tr class="form_row">
+                                    <td class="col-md-1">
+                                        <input class="select_id" onchange="getId(this)" type="checkbox" class=""
+                                            name="ids[]" id="ids_{{ $index + 1 }}" value="{{ $order->id }}" />
+                                    </td>
                                     <td class="col-md-4">
                                         <div class="">
                                             <div class="">
@@ -62,7 +67,7 @@
                                                 value="{{ $order->quantity }}" />
                                         </div>
                                     </td>
-                                    <td class="col-md-3">
+                                    <td class="col-md-2">
                                         <div class="form-group">
                                             <input readonly type="text" value="{{ $order->amount }}" name="total[]"
                                                 id="total_{{ $index + 1 }}" class="form-control u-total" />
@@ -79,6 +84,7 @@
                 </div>
                 <div class="modal-footer justify-content-between mt-3">
                     <div class="px-0">
+                        <button type="button" disabled class="btn btn-danger btn-delete-all">delete selected</button>
                     </div>
                     <button type="submit" class="btn btn-success text-capitalize" title="add invoice">Save Order</button>
                 </div>
@@ -104,9 +110,36 @@
     @endif
 @endsection
 @section('js')
-    <script>;
+    <script>
+        function getId() {}
+        $(document).on('click', '.btn-delete-all', function(e) {
+            var ids = [];
+            var checkedValue;
+            $('.select_id:checked').each(function() {
+                checkedValue = $(this).val();
+                if (!checkedValue) {
+
+                } else {
+                    ids.push(checkedValue)
+                    console.log(ids);
+                }
+            });
+           /*  $.ajax({
+                url: '{{ route('delete.order.multiple') }}',
+                type: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    ids: ids
+                },
+                success: function(res) {
+                    console.log(res);
+                },
+                error: function(res) {
+                    console.log(res);
+                }
+            }) */
+        });
         $(document).on('click', '.btn-delete', function(e) {
-            console.log(e);
             $.ajax({
                 url: "/order/delete/" + e.target.id,
                 type: 'POST',

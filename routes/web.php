@@ -61,6 +61,8 @@ Route::middleware(["auth", "admin"])->group(function () {
     Route::post("/product/add", "create")->name("product.add"); //create a new product
     Route::put("/product/update", "update")->name("product.update"); //update quantity of a product
     Route::post("/product/delete/{id}", "destroy")->name("product.delete"); //delete the product
+    Route::get('/product/open-stock', 'openStock')->name('open-stock');
+    // Route::post('/product/open-stock', 'openStock')->name('open-stock');
   });
   // suppliers routes
   Route::controller(SupplierController::class)->group(function () {
@@ -105,10 +107,12 @@ Route::middleware(["auth", "admin"])->group(function () {
     Route::put("/order/update", "update")->name("order.update"); //update quantity of a order
     Route::put('/order/saved/today/delete', 'deleteAll')->name('order.today.delete');
     Route::post("/order/delete/{id}", "destroy")->name('order.delete'); //delete the order
+    Route::delete('/delete/saved-order', 'deleteMultiple')->name('delete.order.multiple');
   });
   Route::controller(ReturnController::class)->group(function () {
     Route::get('/returns', 'index')->name('returns');
     Route::get('/return/edit/{id}', 'edit')->name('return.edit');
     Route::post('/return/add', 'create')->name('return.add');
+    Route::post('/return/reset/{ID}/{order_id}', 'ResetReturn');
   });
 });

@@ -16,5 +16,6 @@ class Returns extends Model
         "quantity",
         "price",
         "amount",
+        "order_id"
     ];
 }

@@ -6,8 +6,11 @@ use Carbon\Carbon;
 use App\Models\v1\Products;
 use App\Models\v1\Suppliers;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Response;
 
 class ProductController extends Controller
 {
@@ -34,6 +37,16 @@ class ProductController extends Controller
 
         return view('pages.add_product', compact(''));
     }
+    public function openStock()
+    {
+        $date = now()->format('Y-M-d');
+        $products = Products::all();
+        $filename = "open-stocks-" . Date('Y-M-d') . ".pdf";
+        $pdf = Pdf::loadView('stocks.stock-view', compact('products', 'date'))->save(public_path("/stocks/" . $filename));
+        $file = public_path("/stocks/" . $filename);
+        return Response::make(file_get_contents($file, true), 200, ['content-type' => 'application/pdf']);
+    }
+
     /** insert new data into database */
     public function create(Request $request)
     {

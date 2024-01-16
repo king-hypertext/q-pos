@@ -41,7 +41,7 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            new DataTable('#supplier_invoice', {
+            var table = new DataTable('#supplier_invoice', {
                 scrollY: false,
                 processing: true,
                 pageLength: 100,

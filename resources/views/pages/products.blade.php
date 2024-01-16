@@ -12,6 +12,13 @@
     @endphp
     <div class="container-fluid">
         <div class="d-flex justify-content-end me-1 mb-2">
+            {{-- <form method="post" action="{{ route('open-stock') }}" class="d-inline mb-0 mx-2">
+                @csrf
+                <input type="hidden" name="stock_date" value="{{ now()->format('Y-m-d-H-i') }}"/>
+                <input type="submit" class="btn btn-success" value="Open Stock">
+            </form> --}}
+            {{-- <form action="" method="post"></form> --}}
+            <a target="_blank" href="{{ route('open-stock') }}" class="btn btn-success mx-2">Open Stock</a>
             <a href="{{ route('product.new') }}" class="btn btn-primary">
                 Add Product
             </a>
@@ -33,9 +40,9 @@
                         <th scope="col">PRODUCT</th>
                         <th scope="col">IMAGE</th>
                         <th scope="col">PRICE(GHS)</th>
-                        <th scope="col">AVAIL. QTY</th>
+                        <th scope="col" title="available quantity">AVAIL. QTY</th>
                         <th scope="col">SUPPLIED BY</th>
-                        <th scope="col">CAT.</th>
+                        <th scope="col" title="category">CAT.</th>
                         <th scope="col">PROD. DATE</th>
                         <th scope="col">EXPIRY DATE</th>
                         <th scope="col">Actions</th>

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('amount');
             $table->date('created_at');
             $table->date('order_date');
+            $table->bigInteger('order_id');
             $table->date('updated_at')->nullable();
         });
     }
